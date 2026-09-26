@@ -1,7 +1,7 @@
-# TCR findings (out of scope for FZTD-162 — recorded, not pursued)
+# TCR findings (out of scope for the publish-API verification — recorded, not pursued)
 
 Component: `eclipse-xfsc/train-trust-validator` (Trusted Content Resolver, TRAIN read side), commit `e27b1ed` (2025-05-25),
-read and briefly exercised on 2026-09-18 while verifying the TSPA publish API. FZTD-162's criteria are all on the
+read and briefly exercised on 2026-09-18 while verifying the TSPA publish API. The verification's criteria are all on the
 write side, so nothing here is evidence for that ticket. Kept because the two defects below affect any consumer
 of the trust lists the pipeline will publish.
 
@@ -48,4 +48,4 @@ with a did:key driver only, TSPA configured to issue the VC under the did:key an
 `vcVerified: true` and found entries by `ServiceTypeIdentifier` and not by `DigitalId.DID`. The run artefacts
 (Dockerfile, compose, validate script, run log) are kept outside this repository as working material. This is
 consistent with the code reading in the main document; it is recorded here as context and is not part of
-FZTD-162's acceptance evidence.
+the publish-API acceptance evidence.
