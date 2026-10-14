@@ -194,7 +194,7 @@ Every image is scanned and a HIGH or CRITICAL finding fails the build. When a fi
 upstream component that this project cannot fix in its own layer, a `scan-exception.json` next to
 the image's Dockerfile may exclude named paths from the gate. It must carry an expiry date, the
 reason and the tracking of the upstream fix; the job prints it into the run summary and fails the
-build once it has expired. The ORCE image carries one for the upstream ORCE runtime and kubectl,
+build once it has expired. The ORCE image carries one for the upstream ORCE runtime, kubectl and the bundled Helm,
 expiring 13 November 2026.
 
 ## Repository protection and least privilege
