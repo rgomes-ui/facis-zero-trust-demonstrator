@@ -71,6 +71,8 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../environments/ionos/">IONOS Cloud</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../environments/application-workloads/">Application workloads</a>
+                  </li>
               </ul>
               <ul class="current">
                 <li class="toctree-l1 current"><a class="reference internal current" href="#">Packaging and containers</a>
@@ -87,7 +89,15 @@
                 </li>
               </ul>
               <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../scenarios/">Scenario decisions</a>
+                </li>
+              </ul>
+              <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../keycloak/">Keycloak integration</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../identity-model/">Identity model</a>
                 </li>
               </ul>
               <ul>
@@ -106,12 +116,19 @@
                 <li class="toctree-l1"><a class="reference internal" href="../tspa-publish-api/">TRAIN trust-list publishing</a>
                 </li>
               </ul>
+              <p class="caption"><span class="caption-text">BDD acceptance</span></p>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../bdd/">BDD acceptance</a>
-                </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bdd/">Harness and pack</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bdd-catalogue/">Catalogue</a>
+                  </li>
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../ci-cd/">CI/CD</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../secrets/">Secrets</a>
                 </li>
               </ul>
               <ul>
@@ -123,12 +140,18 @@
                 </li>
               </ul>
               <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../licenses/">Licenses</a>
+                </li>
+              </ul>
+              <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../specifications/">Specification changes</a>
                 </li>
               </ul>
               <p class="caption"><span class="caption-text">Architecture decisions</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../adr/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adr/tdr-decisions/">TDR decisions ADR 001–006</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../adr/0001-service-mesh-mode-istio-ambient-with-cilium/">0001 Service mesh mode</a>
                   </li>
@@ -187,7 +210,7 @@
 <tr>
 <td>Helm charts</td>
 <td><code>deployment/helm/</code></td>
-<td>OCI chart artefacts</td>
+<td>Packaged at the release version and attached to the GitHub release with checksums; pushed as OCI chart artefacts once a registry is configured</td>
 </tr>
 <tr>
 <td>SBOM</td>
@@ -212,7 +235,7 @@
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../environments/ionos/" class="btn btn-neutral float-left" title="IONOS Cloud"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../environments/application-workloads/" class="btn btn-neutral float-left" title="Application workloads"><span class="icon icon-circle-arrow-left"></span> Previous</a>
         <a href="../flows/" class="btn btn-neutral float-right" title="Orchestrated flows">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
@@ -241,7 +264,7 @@
         </span>
     
     
-      <span><a href="../environments/ionos/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../environments/application-workloads/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
       <span><a href="../flows/" style="color: #fcfcfc">Next &raquo;</a></span>
