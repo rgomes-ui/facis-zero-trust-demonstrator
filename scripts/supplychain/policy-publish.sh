@@ -56,7 +56,9 @@ push=(--no-tty --format 'go-template={{.digest}}' --artifact-type application/vn
 sign=(--yes --key "$COSIGN_KEY" --tlog-upload=false --new-bundle-format=false)
 verify=(--key "$public" --insecure-ignore-tlog=true)
 if [ "${PLAIN_HTTP:-}" = true ]; then
-  push+=(--plain-http); sign+=(--allow-http-registry); verify+=(--allow-http-registry)
+  # verify needs both: with --allow-http-registry alone it still resolves a registry that is not
+  # localhost over https (cosign 2.6).
+  push+=(--plain-http); sign+=(--allow-http-registry); verify+=(--allow-http-registry --allow-insecure-registry)
 fi
 
 # oras records the file's path as the layer's title and refuses one that leaves the working directory,

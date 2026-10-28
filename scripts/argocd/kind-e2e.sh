@@ -152,14 +152,19 @@ scripts/supplychain/policy-package.sh "$work/release-b" "$work/pkg/b.tar.gz" >/d
 cp -r deployment/admission "$work/tampered"
 sed -i 's/\^ztd-/^any-/' "$work/tampered/constraints/naming.yaml"
 scripts/supplychain/policy-package.sh "$work/tampered" "$work/pkg/t.tar.gz" >/dev/null
-publish() { # package key-dir version created -> the digest on stdout
-  docker run --rm --network kind -v "$work:/w" -v "$bin:/tools:ro" -v "$root:/src:ro" \
+publish() { # package key-dir version created -> the digest on stdout, "failed" (and the log) otherwise
+  if docker run --rm --network kind -v "$work:/w" -v "$bin:/tools:ro" -v "$root:/src:ro" \
     -e COSIGN_PASSWORD= -e PLAIN_HTTP=true -e CHANNEL=main -e ORAS=/tools/oras -e COSIGN=/tools/cosign \
     -e COSIGN_KEY="/w/$2/cosign.key" -e PUBLIC_KEY="/w/$2/cosign.pub" -e CREATED="$4" \
-    "$toolbox" bash /src/scripts/supplychain/policy-publish.sh "/w/pkg/$1" "$reg/$policy_repo" "$3" e2e 2>&1 | tail -n1 | sed 's/.*@//'
+    "$toolbox" bash /src/scripts/supplychain/policy-publish.sh "/w/pkg/$1" "$reg/$policy_repo" "$3" e2e >"$work/publish.log" 2>&1; then
+    tail -n1 "$work/publish.log" | sed 's/.*@//'
+  else
+    cat "$work/publish.log" >&2
+    echo failed
+  fi
 }
 digest_a=$(publish a.tar.gz key 0.0.0-a 2020-02-02T02:02:02Z)
-case "$digest_a" in sha256:*) pass "release A published and signed: $digest_a" ;; *) fail "release A not published: $digest_a"; exit 1 ;; esac
+case "$digest_a" in sha256:*) pass "release A published and signed: $digest_a" ;; *) fail "release A not published"; exit 1 ;; esac
 
 step "Puller image"
 docker build -q --platform linux/amd64 -f deployment/docker/policy-puller/Dockerfile -t "$host_reg/ztd/policy-puller:e2e" . >/dev/null
@@ -208,7 +213,7 @@ pattern_b="${pattern_a/^ztd-/^(ztd|zone)-}"   # release B's, as the sed above ma
 
 step "A tampered package at the channel tag is refused"
 digest_t=$(publish t.tar.gz other-key 0.0.0-t 2020-04-04T04:04:04Z)
-case "$digest_t" in sha256:*) ;; *) fail "the tampered package was not published: $digest_t"; exit 1 ;; esac
+case "$digest_t" in sha256:*) ;; *) fail "the tampered package was not published"; exit 1 ;; esac
 if run_puller; then fail "the puller accepted the tampered package"; else pass "the puller refused the tampered package"; fi
 if [ "$(pinned)" = "$digest_a" ] && children_at "$digest_a"; then pass "the zone still reads release A"; else fail "the zone moved from release A: parent at '$(pinned)'"; fi
 case "$(refused)" in *unsigned*) pass "the refusal is on the Application: $(refused)" ;; *) fail "no refusal recorded on the Application: '$(refused)'" ;; esac
@@ -217,7 +222,7 @@ if [ "$(naming_pattern)" = "$pattern_a" ]; then pass "the naming constraint is u
 
 step "A release published with the trusted key reaches the cluster"
 digest_b=$(publish b.tar.gz key 0.0.0-b 2020-03-03T03:03:03Z)
-case "$digest_b" in sha256:*) ;; *) fail "release B was not published: $digest_b"; exit 1 ;; esac
+case "$digest_b" in sha256:*) ;; *) fail "release B was not published"; exit 1 ;; esac
 if run_puller; then pass "the puller applied release B"; else fail "the puller did not apply release B"; fi
 if [ "$(pinned)" = "$digest_b" ] && children_at "$digest_b"; then pass "every child reads release B"; else fail "the children do not read release B: parent at '$(pinned)'"; fi
 if [ "$(naming_pattern)" = "$pattern_b" ]; then pass "the naming constraint in the cluster is release B's"; else fail "the naming constraint is $(naming_pattern), not release B's"; fi

@@ -151,6 +151,8 @@ if [ -n "$policy_repository" ]; then
   # plain-http test registry is reached over http. The digest the zone already follows is kept across
   # a re-run: the parent is re-applied whole, and losing the digest would send the zone back to Git
   # until the next pull.
+  force_http=""
+  [ -z "${PLAIN_HTTP_REGISTRY:-}" ] || force_http='insecureOCIForceHttp: "true"'
   kubectl apply -f - >/dev/null <<SECRET
 apiVersion: v1
 kind: Secret
@@ -163,7 +165,7 @@ stringData:
   name: ztd-policy-package
   type: oci
   url: "oci://$policy_repository"
-  ${PLAIN_HTTP_REGISTRY:+insecureOCIForceHttp: "true"}
+  $force_http
 SECRET
   current_digest=$(kubectl -n "$ns" get application ztd-admission -o jsonpath='{.spec.source.helm.valuesObject.package.digest}' 2>/dev/null || true)
   package_values="        package:

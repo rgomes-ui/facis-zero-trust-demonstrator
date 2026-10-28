@@ -145,7 +145,7 @@ func (k *kubeClient) do(ctx context.Context, method, path, contentType string, b
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	out, err := io.ReadAll(io.LimitReader(resp.Body, maxResponse+1))
 	if err != nil {
 		return nil, err
