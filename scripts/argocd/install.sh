@@ -11,7 +11,16 @@
 #   BIN=<dir holding the Argo CD chart archive> TRUST_REPOSITORY=<host/path> \
 #   [REPO_URL=https://github.com/eclipse-xfsc/facis-zero-trust-demonstrator.git] [REVISION=main] \
 #   [CILIUM=1 | KUBE_API_CIDRS=a/32,b/32] [KUBE_API_PORTS=443,6443] [NAMESPACE_LABELS="key=value ..."] \
+#   [POLICY_REPOSITORY=<host/path> PULLER_IMAGE=<repository@sha256:...> [POLICY_TAG=main] \
+#    [TRUST_KEY=docs/contracts/keys/interim-cosign.pub] [PLAIN_HTTP_REGISTRY=host:port]] \
 #   scripts/argocd/install.sh
+#
+# With POLICY_REPOSITORY the zone reads the admission policy from the package published there (ZT-12,
+# policy-publish.yml) instead of from Git: the installer declares the repository to Argo CD, installs
+# the puller (deployment/helm/policy-puller) that verifies the package's signature and writes its
+# digest into the parent Application, runs it once, and proves every child reads the package at that
+# digest. Git still provides the chart the parent renders. A re-run keeps the digest the zone follows.
+# Without POLICY_REPOSITORY the children read Git, and a zone that read the package goes back to Git.
 #
 # TRUST_REPOSITORY must be one of the provider's trust.repositories when the admission provider is
 # installed (release admission in gatekeeper-system): the constraint and the provider then agree, and
@@ -39,7 +48,20 @@ revision="${REVISION:-main}"
 chart="$BIN/argo-cd-$ARGOCD_CHART_VERSION.tgz"
 ns=argocd
 apps=(ztd-admission admission-templates admission-exemptions admission-constraints)
+children=(admission-templates admission-exemptions admission-constraints)
 api_ports="${KUBE_API_PORTS:-443,6443}"
+policy_repository="${POLICY_REPOSITORY:-}"
+if [ -n "$policy_repository" ]; then
+  : "${PULLER_IMAGE:?set PULLER_IMAGE with POLICY_REPOSITORY}"
+  case "$PULLER_IMAGE" in *@sha256:*) ;; *) echo "PULLER_IMAGE must be a digest reference" >&2; exit 2 ;; esac
+  policy_tag="${POLICY_TAG:-main}"
+  trust_key="${TRUST_KEY:-docs/contracts/keys/interim-cosign.pub}"
+  [ -s "$trust_key" ] || { echo "TRUST_KEY $trust_key is missing" >&2; exit 2; }
+  # The registry's port: the lane to it, and 443 unless the host names another.
+  policy_host="${policy_repository%%/*}"
+  policy_port=443
+  case "$policy_host" in *:*) policy_port="${policy_host##*:}" ;; esac
+fi
 
 echo "== Trusted repository"
 # The provider's trust.repositories, when the admission provider is installed; the prefix given here
@@ -122,6 +144,34 @@ unpinned=$(helm template argocd "$chart" -n "$ns" "${values[@]}" | grep -E '^\s*
 helm upgrade --install argocd "$chart" -n "$ns" "${values[@]}" --wait --timeout 8m >/dev/null
 echo "every image pinned by digest; release argocd deployed"
 
+package_values=""
+if [ -n "$policy_repository" ]; then
+  echo "== Policy package repository"
+  # Declared to Argo CD as an OCI repository, so the repo server reads oci://$policy_repository; a
+  # plain-http test registry is reached over http. The digest the zone already follows is kept across
+  # a re-run: the parent is re-applied whole, and losing the digest would send the zone back to Git
+  # until the next pull.
+  kubectl apply -f - >/dev/null <<SECRET
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ztd-policy-package
+  namespace: $ns
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  name: ztd-policy-package
+  type: oci
+  url: "oci://$policy_repository"
+  ${PLAIN_HTTP_REGISTRY:+insecureOCIForceHttp: "true"}
+SECRET
+  current_digest=$(kubectl -n "$ns" get application ztd-admission -o jsonpath='{.spec.source.helm.valuesObject.package.digest}' 2>/dev/null || true)
+  package_values="        package:
+          repository: \"$policy_repository\"
+          digest: \"$current_digest\""
+  echo "oci://$policy_repository, tag $policy_tag${current_digest:+; the zone follows $current_digest}"
+fi
+
 echo "== Admission policy from $repo_url at $revision"
 # The bootstrap project confines the parent: one source repository, this namespace as the only
 # destination, and only Applications and AppProjects as what it may create. The parent: Argo CD renders
@@ -169,6 +219,7 @@ spec:
         trust:
           repositories:
             - "$TRUST_REPOSITORY"
+${package_values}
   destination:
     server: https://kubernetes.default.svc
     namespace: $ns
@@ -183,6 +234,49 @@ spec:
         factor: 2
         maxDuration: 3m
 APP
+
+if [ -n "$policy_repository" ]; then
+  echo "== Policy puller"
+  # The puller, then one run of it now: the install ends with the zone on the package, or not at all.
+  # The lane from the repo server to the registry exists for 443 (the chart's Git lane); another port,
+  # a test registry's, gets its own.
+  if [ "$policy_port" != 443 ]; then
+    kubectl apply -f - >/dev/null <<POLICY
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-policy-registry-egress
+  namespace: $ns
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: argocd-repo-server
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - ipBlock: {cidr: 0.0.0.0/0}
+      ports:
+        - {port: $policy_port, protocol: TCP}
+POLICY
+  fi
+  puller_values=(--set image.repository="${PULLER_IMAGE%@*}" --set image.digest="${PULLER_IMAGE#*@}"
+    --set package.repository="$policy_repository" --set package.tag="$policy_tag"
+    --set egress.registryPort="$policy_port" --set-file trust.publicKeys="$trust_key")
+  [ -z "${PLAIN_HTTP_REGISTRY:-}" ] || puller_values+=(--set insecurePlainHTTPRegistry="$PLAIN_HTTP_REGISTRY")
+  helm upgrade --install policy-puller deployment/helm/policy-puller -n "$ns" "${puller_values[@]}" --wait --timeout 3m >/dev/null
+  job="ztd-policy-puller-install-$(date +%s)"
+  kubectl -n "$ns" create job --from=cronjob/ztd-policy-puller "$job" >/dev/null
+  if ! kubectl -n "$ns" wait --for=condition=complete --timeout=3m "job/$job" >/dev/null 2>&1; then
+    echo "the policy puller did not apply a package:" >&2
+    kubectl -n "$ns" logs "job/$job" >&2 || true
+    exit 1
+  fi
+  kubectl -n "$ns" logs "job/$job"
+  kubectl -n "$ns" delete job "$job" --ignore-not-found >/dev/null
+  pinned=$(kubectl -n "$ns" get application ztd-admission -o jsonpath='{.metadata.annotations.facis\.ztd/policy-digest}')
+  case "$pinned" in sha256:*) ;; *) echo "the parent carries no verified policy digest" >&2; exit 1 ;; esac
+fi
+
 # Every Application Synced and Healthy: the parent, then the three children it creates.
 for app in "${apps[@]}"; do
   ok=
@@ -198,6 +292,14 @@ for app in "${apps[@]}"; do
   fi
   echo "$app Synced/Healthy at $(kubectl -n "$ns" get application "$app" -o jsonpath='{.status.sync.revision}')"
 done
+if [ -n "$policy_repository" ]; then
+  # Every child reads the package, at the digest the puller verified.
+  for app in "${children[@]}"; do
+    source=$(kubectl -n "$ns" get application "$app" -o jsonpath='{.spec.source.repoURL}@{.status.sync.revision}')
+    [ "$source" = "oci://$policy_repository@$pinned" ] || { echo "$app reads $source, not oci://$policy_repository@$pinned" >&2; exit 1; }
+  done
+  echo "the children read oci://$policy_repository at $pinned"
+fi
 live=$(kubectl get k8sztdallowedrepositories ztd-allowed-repositories -o jsonpath='{.spec.parameters.repositories}')
 [ "$live" = "[\"$TRUST_REPOSITORY\"]" ] || { echo "allowed repositories are $live, not [\"$TRUST_REPOSITORY\"]" >&2; exit 1; }
 echo "allowed repositories: $live"

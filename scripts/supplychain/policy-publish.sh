@@ -8,8 +8,13 @@
 #
 #   COSIGN_KEY=<key file or env://VAR> [COSIGN_PASSWORD=...] [PUBLIC_KEY=docs/contracts/keys/interim-cosign.pub] \
 #   [REGISTRY_USER=... REGISTRY_PASSWORD=...] [SOURCE_URL=<repository url>] [CREATED=<RFC 3339>] \
-#   [ORAS=oras] [COSIGN=cosign] \
+#   [CHANNEL=main] [ORAS=oras] [COSIGN=cosign] \
 #     scripts/supplychain/policy-publish.sh <package.tar.gz> <registry/repository> <version> <revision>
+#
+# CHANNEL is a second tag moved to the digest once it is signed and verified: the one a zone's puller
+# follows (deployment/helm/policy-puller), since version tags have no order a consumer could pick the
+# newest by. It is a pointer and nothing more: the signature is on the digest, and the puller verifies
+# what the tag points at, never the tag.
 #
 # REGISTRY_USER and REGISTRY_PASSWORD are the registry credential (a robot account). They are written
 # to a Docker config private to this run, which oras and cosign both read, rather than given to
@@ -65,4 +70,11 @@ echo "pushed $repository:$version"
 "$cosign" sign "${sign[@]}" "$repository@$digest"
 "$cosign" verify "${verify[@]}" "$repository@$digest" >/dev/null
 echo "signed and verified against $public"
+if [ -n "${CHANNEL:-}" ]; then
+  tag=()
+  [ -n "${DOCKER_CONFIG:-}" ] && tag+=(--registry-config "$DOCKER_CONFIG/config.json")
+  [ "${PLAIN_HTTP:-}" = true ] && tag+=(--plain-http)
+  "$oras" tag ${tag[@]+"${tag[@]}"} "$repository@$digest" "$CHANNEL" >/dev/null
+  echo "tagged $repository:$CHANNEL"
+fi
 echo "$repository@$digest"
