@@ -79,62 +79,71 @@ type manifest struct {
 // new and newer. A refusal and an unavailability are recorded on the Application (an Event, and the
 // refused annotation) before they are returned, so a failed run is visible without its log.
 func (p *Puller) Pull(ctx context.Context) (Outcome, error) {
-	out, err := p.pull(ctx)
+	app, out, err := p.pull(ctx)
 	var refused *Refusal
 	var unavailable *Unavailable
 	switch {
 	case errors.As(err, &refused):
-		p.record(ctx, "Warning", ReasonRefused, refused.Error())
+		p.record(ctx, app, "Warning", ReasonRefused, refused.Error())
 	case errors.As(err, &unavailable):
-		p.record(ctx, "Warning", ReasonUnavailable, unavailable.Error())
+		p.record(ctx, app, "Warning", ReasonUnavailable, unavailable.Error())
 	}
 	return out, err
 }
 
-func (p *Puller) pull(ctx context.Context) (Outcome, error) {
+// pull returns the Application it read, for record: nil when the API server could not be reached.
+func (p *Puller) pull(ctx context.Context) (*application, Outcome, error) {
+	// The Application first: what the candidate is ordered against, and where every outcome is recorded.
+	app, err := p.Kube.getApplication(ctx, p.Namespace, p.Application)
+	if err != nil {
+		return nil, Outcome{}, &Unavailable{"application " + p.Namespace + "/" + p.Application, err}
+	}
 	m, err := p.Client.ManifestByTag(ctx, p.Registry, p.Repository, p.Tag)
 	if errors.Is(err, ociclient.ErrNotFound) {
-		return Outcome{}, &Refusal{"no-package", "nothing is published at tag " + p.Tag}
+		return app, Outcome{}, &Refusal{"no-package", "nothing is published at tag " + p.Tag}
 	}
 	if err != nil {
-		return Outcome{}, &Unavailable{"registry " + p.Registry, err}
+		return app, Outcome{}, &Unavailable{"registry " + p.Registry, err}
 	}
 	if m.MediaType != ociclient.MediaTypeOCIManifest {
-		return Outcome{}, &Refusal{"not-a-policy-package", "the tag names a " + m.MediaType + ", not an OCI manifest"}
+		return app, Outcome{}, &Refusal{"not-a-policy-package", "the tag names a " + m.MediaType + ", not an OCI manifest"}
 	}
 	var mf manifest
 	if err := json.Unmarshal(m.Body, &mf); err != nil {
-		return Outcome{}, &Refusal{"not-a-policy-package", "manifest: " + err.Error()}
+		return app, Outcome{}, &Refusal{"not-a-policy-package", "manifest: " + err.Error()}
 	}
 	if mf.ArtifactType != ArtifactType {
-		return Outcome{}, &Refusal{"not-a-policy-package", fmt.Sprintf("artifact type %q, want %q", mf.ArtifactType, ArtifactType)}
+		return app, Outcome{}, &Refusal{"not-a-policy-package", fmt.Sprintf("artifact type %q, want %q", mf.ArtifactType, ArtifactType)}
 	}
 	created, err := time.Parse(time.RFC3339, mf.Annotations[createdAnnotation])
 	if err != nil {
-		return Outcome{}, &Refusal{"unordered", "no usable " + createdAnnotation + " annotation: the package cannot be ordered against the one followed"}
+		return app, Outcome{}, &Refusal{"unordered", "no usable " + createdAnnotation + " annotation: the package cannot be ordered against the one followed"}
 	}
 
 	ref := cosignverify.Ref{Registry: p.Registry, Repository: p.Repository, Digest: m.Digest}
 	switch r := cosignverify.VerifySignature(ctx, p.Client, ref, p.Keys); {
 	case r.Code == cosignverify.CodeProviderDown:
-		return Outcome{}, &Unavailable{"registry " + p.Registry, errors.New(r.Detail)}
+		return app, Outcome{}, &Unavailable{"registry " + p.Registry, errors.New(r.Detail)}
 	case !r.OK():
-		return Outcome{}, &Refusal{"unsigned", r.Code + ": " + r.Detail}
+		return app, Outcome{}, &Refusal{"unsigned", r.Code + ": " + r.Detail}
 	}
 
-	app, err := p.Kube.getApplication(ctx, p.Namespace, p.Application)
-	if err != nil {
-		return Outcome{}, &Unavailable{"application " + p.Namespace + "/" + p.Application, err}
-	}
 	// Ordered against the package last verified here, not against the registry: a tag moved back to
 	// an older digest is refused even once the newer one is gone from the registry.
 	if pinned, err := time.Parse(time.RFC3339, app.Metadata.Annotations[AnnotationCreated]); err == nil && created.Before(pinned) {
-		return Outcome{}, &Refusal{"rollback", fmt.Sprintf("the package at %s was created %s, before the one followed (%s)",
+		return app, Outcome{}, &Refusal{"rollback", fmt.Sprintf("the package at %s was created %s, before the one followed (%s)",
 			p.Tag, created.Format(time.RFC3339), pinned.Format(time.RFC3339))}
 	}
 	out := Outcome{Digest: m.Digest, Created: created.Format(time.RFC3339)}
 	if app.Spec.Source.Helm.ValuesObject.Package.Digest == m.Digest && app.Metadata.Annotations[AnnotationDigest] == m.Digest {
-		return out, nil
+		// Already followed. A refusal recorded since (the tag moved away and back) no longer holds.
+		if app.Metadata.Annotations[AnnotationRefused] != "" {
+			if err := p.Kube.patchApplication(ctx, p.Namespace, p.Application,
+				map[string]any{"metadata": map[string]any{"annotations": map[string]any{AnnotationRefused: nil}}}); err != nil {
+				return app, Outcome{}, &Unavailable{"application " + p.Namespace + "/" + p.Application, err}
+			}
+		}
+		return app, out, nil
 	}
 
 	now := time.Now
@@ -153,18 +162,18 @@ func (p *Puller) pull(ctx context.Context) (Outcome, error) {
 		}}}},
 	}
 	if err := p.Kube.patchApplication(ctx, p.Namespace, p.Application, patch); err != nil {
-		return Outcome{}, &Unavailable{"application " + p.Namespace + "/" + p.Application, err}
+		return app, Outcome{}, &Unavailable{"application " + p.Namespace + "/" + p.Application, err}
 	}
 	out.Changed = true
-	p.record(ctx, "Normal", ReasonApplied, fmt.Sprintf("%s/%s@%s (created %s) verified and applied", p.Registry, p.Repository, m.Digest, out.Created))
-	return out, nil
+	p.record(ctx, app, "Normal", ReasonApplied, fmt.Sprintf("%s/%s@%s (created %s) verified and applied", p.Registry, p.Repository, m.Digest, out.Created))
+	return app, out, nil
 }
 
 // record writes an Event on the Application and, for a warning, the refused annotation when it
 // changed. Best effort: what it cannot write is lost with the run's log, never a failure of the run.
-func (p *Puller) record(ctx context.Context, kind, reason, message string) {
-	app, err := p.Kube.getApplication(ctx, p.Namespace, p.Application)
-	if err != nil {
+// app is the Application as pull read it; nil when pull could not, in which case nothing is tried.
+func (p *Puller) record(ctx context.Context, app *application, kind, reason, message string) {
+	if app == nil {
 		return
 	}
 	_ = p.Kube.createEvent(ctx, p.Namespace, app, kind, reason, message)

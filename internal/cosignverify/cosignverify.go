@@ -347,8 +347,8 @@ func (v *Verifier) verify(ctx context.Context, ref Ref, policy *Policy) Result {
 
 func tagFor(digest, suffix string) string { return strings.Replace(digest, ":", "-", 1) + "." + suffix }
 
-// layers fetches the manifest at the cosign tag; a missing tag is "no layers", not an error.
-func layers(ctx context.Context, client *ociclient.Client, ref Ref, suffix string) ([]ociclient.Descriptor, error) {
+// cosignLayers fetches the manifest at the cosign tag; a missing tag is "no layers", not an error.
+func cosignLayers(ctx context.Context, client *ociclient.Client, ref Ref, suffix string) ([]ociclient.Descriptor, error) {
 	m, err := client.ManifestByTag(ctx, ref.Registry, ref.Repository, tagFor(ref.Digest, suffix))
 	if errors.Is(err, ociclient.ErrNotFound) {
 		return nil, nil
@@ -402,7 +402,7 @@ func (v *Verifier) verifySignature(ctx context.Context, ref Ref, policy *Policy)
 // platform and no attestations. A registry that cannot be reached is CodeProviderDown, never
 // CodeUnsigned: unreachable is not the same as unsigned.
 func VerifySignature(ctx context.Context, client *ociclient.Client, ref Ref, keys []*ecdsa.PublicKey) Result {
-	layers, err := layers(ctx, client, ref, "sig")
+	layers, err := cosignLayers(ctx, client, ref, "sig")
 	if err != nil {
 		return down(err)
 	}
@@ -469,7 +469,7 @@ func pae(payloadType string, payload []byte) []byte {
 // reported with the invalid code. Any one layer that passes is enough (a re-attested image carries
 // its earlier attestations too).
 func (v *Verifier) verifyAttestation(ctx context.Context, ref Ref, policy *Policy, want, missing, invalid string, validate func(json.RawMessage) error) (json.RawMessage, Result) {
-	layers, err := layers(ctx, v.client, ref, "att")
+	layers, err := cosignLayers(ctx, v.client, ref, "att")
 	if err != nil {
 		return nil, down(err)
 	}

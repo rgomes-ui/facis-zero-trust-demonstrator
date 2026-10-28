@@ -7,7 +7,7 @@ follows, and writes the verified digest into the parent Application (`ztd-admiss
 values Argo CD renders the children that read the admission policy from the package by digest.
 A refusal or an unreachable registry changes nothing: the zone keeps the digest it last verified.
 Installed by `scripts/argocd/install.sh` with `POLICY_REPOSITORY`; the design and the operations are
-in [deployment/argocd/README.md](../../deployment/argocd/README.md#policy-from-the-registry).
+in [deployment/argocd/README.md](../../argocd/README.md#policy-from-the-registry).
 
 ## Values
 

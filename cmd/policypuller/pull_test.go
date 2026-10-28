@@ -81,6 +81,13 @@ func (r *registry) blob(b []byte) string {
 	return digestOf(b)
 }
 
+// retag points the tag at a manifest already stored by digest, as `oras tag` does.
+func (r *registry) retag(tag, digest string) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.manifests[tag] = r.manifests[digest]
+}
+
 func (r *registry) untag(tag string) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
@@ -429,5 +436,33 @@ func TestASuccessClearsTheRefusalAndARepeatedRefusalIsWrittenOnce(t *testing.T) 
 	}
 	if f.api.annotation(AnnotationRefused) != "" {
 		t.Fatalf("refused annotation still %q", f.api.annotation(AnnotationRefused))
+	}
+}
+
+func TestATagMovedAwayAndBackClearsTheRefusal(t *testing.T) {
+	f := newFixture(t, nil, "")
+	d := f.publish("main", ArtifactType, policy("2026-10-20T10:00:00Z"))
+	f.sign(f.key, d)
+	if _, err := f.pull(); err != nil {
+		t.Fatal(err)
+	}
+	// The tag moved to a package nobody trusted signed, then back to the one followed.
+	other := f.publish("main", ArtifactType, policy("2026-10-21T10:00:00Z"))
+	f.sign(newKey(t), other)
+	_, err := f.pull()
+	wantRefusal(t, err, "unsigned")
+	if f.api.annotation(AnnotationRefused) == "" {
+		t.Fatal("no refusal recorded")
+	}
+	f.reg.retag("main", d)
+	out, err := f.pull()
+	if err != nil || out.Changed || out.Digest != d {
+		t.Fatalf("got %+v, %v", out, err)
+	}
+	if f.api.annotation(AnnotationRefused) != "" {
+		t.Fatalf("refused annotation still %q after the tag came back to the followed digest", f.api.annotation(AnnotationRefused))
+	}
+	if f.api.digest() != d || f.api.annotation(AnnotationDigest) != d {
+		t.Fatalf("the Application moved from %s: %v", d, f.api.app)
 	}
 }

@@ -172,6 +172,15 @@ SECRET
           repository: \"$policy_repository\"
           digest: \"$current_digest\""
   echo "oci://$policy_repository, tag $policy_tag${current_digest:+; the zone follows $current_digest}"
+else
+  # Back to Git, or never on the package: nothing of the package stays. The puller goes first, before
+  # the parent is re-applied without package values - a run of it after that would write a digest
+  # with no repository, which the chart refuses to render.
+  if helm status policy-puller -n "$ns" >/dev/null 2>&1; then
+    helm uninstall policy-puller -n "$ns" --wait >/dev/null
+    echo "the policy puller was removed: the zone reads Git"
+  fi
+  kubectl -n "$ns" delete secret/ztd-policy-package networkpolicy/allow-policy-registry-egress --ignore-not-found >/dev/null
 fi
 
 echo "== Admission policy from $repo_url at $revision"
@@ -260,6 +269,8 @@ spec:
       ports:
         - {port: $policy_port, protocol: TCP}
 POLICY
+  else
+    kubectl -n "$ns" delete networkpolicy allow-policy-registry-egress --ignore-not-found >/dev/null
   fi
   puller_values=(--set image.repository="${PULLER_IMAGE%@*}" --set image.digest="${PULLER_IMAGE#*@}"
     --set package.repository="$policy_repository" --set package.tag="$policy_tag"
@@ -268,11 +279,20 @@ POLICY
   helm upgrade --install policy-puller deployment/helm/policy-puller -n "$ns" "${puller_values[@]}" --wait --timeout 3m >/dev/null
   job="ztd-policy-puller-install-$(date +%s)"
   kubectl -n "$ns" create job --from=cronjob/ztd-policy-puller "$job" >/dev/null
-  if ! kubectl -n "$ns" wait --for=condition=complete --timeout=3m "job/$job" >/dev/null 2>&1; then
-    echo "the policy puller did not apply a package:" >&2
-    kubectl -n "$ns" logs "job/$job" >&2 || true
-    exit 1
-  fi
+  # Polled rather than `kubectl wait --for=condition=complete`, which does not return for a failed
+  # Job (a refusal, with backoffLimit 0) before its timeout.
+  state=
+  for _ in $(seq 90); do
+    state=$(kubectl -n "$ns" get job "$job" -o jsonpath='{.status.succeeded}/{.status.failed}')
+    case "$state" in 1/*|*/1) break ;; esac
+    sleep 2
+  done
+  case "$state" in
+    1/*) ;;
+    *) echo "the policy puller did not apply a package (job $job: succeeded/failed = $state):" >&2
+       kubectl -n "$ns" logs "job/$job" >&2 || true
+       exit 1 ;;
+  esac
   kubectl -n "$ns" logs "job/$job"
   kubectl -n "$ns" delete job "$job" --ignore-not-found >/dev/null
   pinned=$(kubectl -n "$ns" get application ztd-admission -o jsonpath='{.metadata.annotations.facis\.ztd/policy-digest}')
