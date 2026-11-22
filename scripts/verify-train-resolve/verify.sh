@@ -72,7 +72,8 @@ work="$(mktemp -d)"
 pids=()
 cleanup() {
   local s=$?
-  for p in "${pids[@]}"; do kill "$p" 2>/dev/null || true; done
+  # "${pids[@]+"${pids[@]}"}": an empty array under set -u is an error in bash before 4.4 (macOS).
+  for p in ${pids[@]+"${pids[@]}"}; do kill "$p" 2>/dev/null || true; done
   wait 2>/dev/null || true
   rm -rf "$work"
   exit "$s"
@@ -142,8 +143,7 @@ fetch_token() {  # fetch_token <out-file>
   jq -rj '.access_token // empty' "$work/tok.json" > "$1"
   [ -s "$1" ] || die "no token obtained: $(jq -c 'del(.access_token)' "$work/tok.json")"
 }
-fetch_token "$work/operator.tok"
-check "the operator's token (service account of xfsctest) was obtained" [ -s "$work/operator.tok" ]
+fetch_token "$work/operator.tok"   # dies when no token comes back; nothing below runs without one
 tspa() {  # tspa <method> <path> [body-file] [token-file]: the proof's own calls; prints the status, body in $work/resp
   local method=$1 path=$2 bodyfile=${3:-} tokfile=${4:-}
   local args=(-sS --max-time 120 -o "$work/resp" -w '%{http_code}' -X "$method" "$api$path")
@@ -294,6 +294,7 @@ rm -f "$steps/probe-window.jsonl"
 set +e
 "$work/probe" -tcr "$tcr" -identity "$identity" -digest "$v2" -until-code CHAN-MEASUREMENT-UNPUBLISHED -ttl "${window}s" -interval 5s -deadline "$((window + 120))s" -record "$steps/probe-window.jsonl" >"$steps/probe-window.out" 2>"$steps/probe-window.err" &
 wpid=$!
+pids+=("$wpid")   # so that an aborted run does not leave it verifying until its deadline
 set -e
 for _ in $(seq 300); do grep -q '"outcome":"accepted"' "$steps/probe-window.jsonl" 2>/dev/null && break; sleep 0.1; done
 check "the probe accepted v2 before the removal" grep -q '"outcome":"accepted"' "$steps/probe-window.jsonl"

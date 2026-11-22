@@ -52,8 +52,9 @@ type KeyFunc func(identity string) (Lookup, error)
 // DefaultKey is the derivation proposed to close ADR-0011 decision 4.3: the key is the identity
 // verbatim, the pointer is the host of the identity URI. For a SPIFFE identity
 // "spiffe://zone-b.example/gateway" the key is that string and the pointer "zone-b.example", the
-// zone's trust domain, which is the zone domain the trust-list file declares. An identity that is
-// not a URI with a host (a DNS SAN, an empty string) has no pointer here: use WithPointers.
+// zone's trust domain, which is the zone domain the trust-list file declares, lowercased since DNS
+// names are case-insensitive. An identity that is not a URI with a host (a DNS SAN, an empty
+// string) has no pointer here: use WithPointers.
 func DefaultKey(identity string) (Lookup, error) {
 	if !strings.Contains(identity, "://") {
 		return Lookup{}, &Error{Code: CodeZoneUnknown, Kind: ErrZoneUnknown, Reason: "the identity is not a URI, so no trust-scheme pointer can be derived from it"}
@@ -62,7 +63,8 @@ func DefaultKey(identity string) (Lookup, error) {
 	if err != nil || u.Hostname() == "" {
 		return Lookup{}, &Error{Code: CodeZoneUnknown, Kind: ErrZoneUnknown, Reason: "the identity URI has no host to use as the trust-scheme pointer", Err: err}
 	}
-	return Lookup{Key: identity, Pointers: []string{u.Hostname()}}, nil
+	// DNS names are case-insensitive; one zone, one pointer, one cache entry. The key stays verbatim.
+	return Lookup{Key: identity, Pointers: []string{strings.ToLower(u.Hostname())}}, nil
 }
 
 // WithPointers derives the key as DefaultKey does, the identity verbatim, but with fixed
@@ -107,8 +109,8 @@ type Source interface {
 
 // Stats counts what the verifier did, for evidence and tests.
 type Stats struct {
-	Hits     atomic.Int64 // resolutions answered from the cache
-	Misses   atomic.Int64 // resolutions that had to consult the source or join a resolution in progress
+	Hits     atomic.Int64 // verifications served from the cache
+	Misses   atomic.Int64 // verifications that waited for a resolution at the source, joined one, or were refused for lack of one
 	Flights  atomic.Int64 // resolutions started at the source
 	Refusals atomic.Int64 // verifications that refused the peer
 }

@@ -46,12 +46,15 @@ func cacheKey(l Lookup) string {
 func (v *Verifier) resolve(ctx context.Context, l Lookup) (Expected, bool, error) {
 	key := cacheKey(l)
 	if exp, ok := v.lookup(key); ok {
+		v.Stats.Hits.Add(1)
 		return exp, true, nil
 	}
 	f, exp, ok := v.start(key, l)
 	if ok {
+		v.Stats.Hits.Add(1) // a flight for this key finished between the lookup and the start
 		return exp, true, nil
 	}
+	v.Stats.Misses.Add(1)
 	if f == nil {
 		return Expected{}, false, refuse(ErrUnreachable, "too many resolutions in progress", nil)
 	}
@@ -130,15 +133,15 @@ func normalise(exp Expected, l Lookup, now time.Time) Expected {
 	return exp
 }
 
+// lookup serves a resolution still within its TTL. The counting is resolve's, once it knows
+// whether the verification was served from the cache or had to wait for a resolution.
 func (v *Verifier) lookup(key string) (Expected, bool) {
 	v.mu.Lock()
 	defer v.mu.Unlock()
 	c, ok := v.cache[key]
 	if !ok || !v.now().Before(c.expires) {
-		v.Stats.Misses.Add(1)
 		return Expected{}, false
 	}
-	v.Stats.Hits.Add(1)
 	return c.exp, true
 }
 

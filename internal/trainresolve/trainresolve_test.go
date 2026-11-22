@@ -54,6 +54,7 @@ func TestDefaultKey(t *testing.T) {
 	}{
 		{"spiffe id", "spiffe://zone-b.facis-ztd.local/gateway", "spiffe://zone-b.facis-ztd.local/gateway", "zone-b.facis-ztd.local", false},
 		{"https uri with port and path", "https://gateway.zone-a.example:8443/x", "https://gateway.zone-a.example:8443/x", "gateway.zone-a.example", false},
+		{"host case is folded, the key is not", "spiffe://Zone-B.Example/Gateway", "spiffe://Zone-B.Example/Gateway", "zone-b.example", false},
 		{"dns san", "gateway.zone-b.example", "", "", true},
 		{"empty", "", "", "", true},
 		{"uri without host", "spiffe:///gateway", "", "", true},

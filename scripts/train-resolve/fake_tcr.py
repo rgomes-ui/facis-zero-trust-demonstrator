@@ -25,10 +25,11 @@ items the client's instance still needs are listed in scripts/train-resolve/READ
 
 Binds 127.0.0.1 only. Every request is appended as a JSON line to --log.
 """
-import argparse, json, subprocess, sys, time, urllib.error, urllib.request
+import argparse, json, subprocess, sys, threading, time, urllib.error, urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 PREFIX = "_scheme._trust."
+LOG_LOCK = threading.Lock()   # handler threads append whole lines, one at a time
 
 
 def main():
@@ -79,7 +80,7 @@ def dig_ptr(args, pointer):
 def fetch(url, timeout=5):
     """GET url as JSON, one retry: (doc, None) or (None, error text)."""
     last = None
-    for _ in range(2):
+    for attempt in range(2):
         try:
             with urllib.request.urlopen(urllib.request.Request(url, headers={"Accept": "application/json"}), timeout=timeout) as r:
                 return json.loads(r.read().decode()), None
@@ -89,7 +90,8 @@ def fetch(url, timeout=5):
                 break           # a 404 does not get better on retry
         except (urllib.error.URLError, OSError, ValueError) as e:
             last = f"{url}: {e}"
-        time.sleep(0.2)
+        if attempt == 0:
+            time.sleep(0.2)
     return None, last
 
 
@@ -116,8 +118,9 @@ class Handler(BaseHTTPRequestHandler):
 
     def _log(self, status, body):
         if self.args.log:
-            with open(self.args.log, "a", encoding="utf-8") as f:
-                f.write(json.dumps({"ts": time.time(), "method": self.command, "path": self.path, "status": status, "body": body}) + "\n")
+            line = json.dumps({"ts": time.time(), "method": self.command, "path": self.path, "status": status, "body": body}) + "\n"
+            with LOG_LOCK, open(self.args.log, "a", encoding="utf-8") as f:
+                f.write(line)
 
     def _end(self, status, doc):
         raw = json.dumps(doc).encode()

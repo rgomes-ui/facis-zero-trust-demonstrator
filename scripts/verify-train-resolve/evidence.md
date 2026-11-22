@@ -1,6 +1,6 @@
 # TRAIN resolution against the real TSPA and name server: evidence
 
-Run of `scripts/verify-train-resolve/verify.sh` on 2026-11-22T00:21:56Z against upstream's TSPA `ecd5fdc` built from its Dockerfile and upstream's zone manager, on kind. The code the run used: `internal/trainresolve` and `cmd/train-resolve-probe` of this checkout (probe built from it), the resolver stand-in `fake_tcr.py` sha256 `f310591e58e44c23dc3ae6974dd3296ffa4cb43fbf0cdc985be390ef9ef0aea7`. Window measured against: 300 s. Raw records: the `--out` directory (per case: the probe's records, stdout and stderr; the publisher's and reconciler's outputs; the stand-ins' request logs; the kind-up log).
+Run of `scripts/verify-train-resolve/verify.sh` on 2026-11-22T11:52:40Z against upstream's TSPA `ecd5fdc` built from its Dockerfile and upstream's zone manager, on kind. The code the run used: `internal/trainresolve` and `cmd/train-resolve-probe` of this checkout (probe built from it), the resolver stand-in `fake_tcr.py` sha256 `f73feffc3d531be0ba654e8f827a88d6bf52dc55a68a5478a670221c51feafd8`. Window measured against: 300 s. Raw records: the `--out` directory (per case: the probe's records, stdout and stderr; the publisher's and reconciler's outputs; the stand-ins' request logs; the kind-up log).
 
 ## Summary of the cases
 
@@ -21,14 +21,13 @@ Run of `scripts/verify-train-resolve/verify.sh` on 2026-11-22T00:21:56Z against 
 | resolver down | CHAN-TRUST-UNREACHABLE | `CHAN-TRUST-UNREACHABLE` | 2 |
 | resolver whose TSPA is down | CHAN-TRUST-UNREACHABLE | `CHAN-TRUST-UNREACHABLE` | 2 |
 
-**Verdict: all 46 checks passed.**
+**Verdict: all 45 checks passed.**
 
 ## 1. The TSPA, Keycloak, the zone manager and the lanes to them
 
 - PASS: the TSPA answers through the port-forward (GET /api/docs 200)
 - PASS: the zone manager's name server answers authoritatively for facis-ztd.local over the forwarded TCP port
-  SOA of `facis-ztd.local`: `ns1.facis-ztd.local. zonedb.facis-ztd.local. 1795306192 28800 7200 604800 3600`
-- PASS: the operator's token (service account of xfsctest) was obtained
+  SOA of `facis-ztd.local`: `ns1.facis-ztd.local. zonedb.facis-ztd.local. 1795306613 28800 7200 604800 3600`
 ## 2. The trust list, the zones' claims in DNS, the gateway's measurement entry
 
 The operator creates the list once; the reconciler applies the repository's file with `--with-zones`, so each zone's claim becomes a real PTR record in the zone manager's name server; the publisher writes the gateway's entry under its own UUID with the lookup key the gateway will present: its identity, `spiffe://zone-b.facis-ztd.local/gateway`. The record is synthetic (the measuring step is not part of this proof); what matters is a real entry in a real list reached through a real PTR.
@@ -40,7 +39,7 @@ The operator creates the list once; the reconciler applies the repository's file
 - PASS: the reconciler's issuer entries are in the list (issuer-b: 9e031244-fd58-5a57-96b9-9885ca279894)
 - PASS: the publisher writes the gateway's entry with v1 (exit 0, published)
 - PASS: the entry's lookup key is the gateway's identity
-  the gateway's entry: UUID `f1548a40-feea-5748-85eb-6f146cd09cf5`, lookup key `spiffe://zone-b.facis-ztd.local/gateway`, value `8129770071f4...`; the list holds 3 entries
+  the gateway's entry: UUID `f1548a40-feea-5748-85eb-6f146cd09cf5`, lookup key `spiffe://zone-b.facis-ztd.local/gateway`, value `8ccdfa6a0862...`; the list holds 3 entries
 ## 3. The resolver stand-in over the real name server and the real list
 
 `scripts/train-resolve/fake_tcr.py` answers `POST /tcr/v1/resolve` the way upstream's resolver does: the pointer is asked of the zone manager's name server (`dig PTR _scheme._trust.<pointer>`, over the forwarded TCP port), the framework it names gives the DID and the trust-list URIs at the TSPA, the list is read and the entry whose `ServiceTypeIdentifier` equals the issuer is returned. What it leaves out is the real resolver's (signature, hash, DID document, DNSSEC); see its README.
@@ -50,7 +49,7 @@ The operator creates the list once; the reconciler applies the repository's file
 - PASS: asked directly, the stand-in returns the gateway's entry from the real list, credential read
 
 ```
-{"pointers":[{"pointer":"zone-b.facis-ztd.local","dids":["did:web:facis-ztd.local"]}],"endpoint":{"tlUri":"http://127.0.0.1:52757/tspa-service/tspa/v1/facis-ztd.local/trust-list","vcVerified":true,"entry":"f1548a40-feea-5748-85eb-6f146cd09cf5"}}
+{"pointers":[{"pointer":"zone-b.facis-ztd.local","dids":["did:web:facis-ztd.local"]}],"endpoint":{"tlUri":"http://127.0.0.1:52452/tspa-service/tspa/v1/facis-ztd.local/trust-list","vcVerified":true,"entry":"f1548a40-feea-5748-85eb-6f146cd09cf5"}}
 ```
 
 ## 4. The peer presenting the published measurement is accepted
@@ -58,10 +57,10 @@ The operator creates the list once; the reconciler applies the repository's file
 - PASS: accepted: exit 0, outcome accepted
 - PASS: accepted: the key is the identity, the pointer is the zone domain
 - PASS: accepted: one expected value, the publisher's entry, the real list's URI
-- PASS: accepted: not from the cache, within the handshake budget (26 ms)
+- PASS: accepted: not from the cache, within the handshake budget (30 ms)
 
 ```
-{"schema":"train-resolve-probe-record/v1","attempt":1,"identity":"spiffe://zone-b.facis-ztd.local/gateway","key":"spiffe://zone-b.facis-ztd.local/gateway","pointers":["zone-b.facis-ztd.local"],"outcome":"accepted","fromCache":false,"expectedCount":1,"entryUUID":"f1548a40-feea-5748-85eb-6f146cd09cf5","trustList":"http://127.0.0.1:52757/tspa-service/tspa/v1/facis-ztd.local/trust-list","elapsedMs":26,"stats":{"Hits":0,"Misses":1,"Flights":1,"Refusals":0}}
+{"schema":"train-resolve-probe-record/v1","attempt":1,"identity":"spiffe://zone-b.facis-ztd.local/gateway","key":"spiffe://zone-b.facis-ztd.local/gateway","pointers":["zone-b.facis-ztd.local"],"outcome":"accepted","fromCache":false,"expectedCount":1,"entryUUID":"f1548a40-feea-5748-85eb-6f146cd09cf5","trustList":"http://127.0.0.1:52452/tspa-service/tspa/v1/facis-ztd.local/trust-list","elapsedMs":30,"stats":{"Hits":0,"Misses":1,"Flights":1,"Refusals":0}}
 ```
 
 ## 5. Two verifications in one process: the second is served from the cache
@@ -70,7 +69,7 @@ The operator creates the list once; the reconciler applies the repository's file
 ## 6. A peer presenting another measurement is refused
 
 - PASS: mismatch: exit 2, CHAN-MEASUREMENT-MISMATCH, the expected value was there
-  reason: `the peer presented 1 measurement(s) [2344c51c3e5a...], TRAIN expects 1 value(s) [8129770071f4...]`
+  reason: `the peer presented 1 measurement(s) [2344c51c3e5a...], TRAIN expects 1 value(s) [8ccdfa6a0862...]`
 ## 7. A peer nobody published, in a known zone
 
 - PASS: unpublished: exit 2, CHAN-MEASUREMENT-UNPUBLISHED, no entry
@@ -99,13 +98,13 @@ One probe process keeps verifying v2 every 5 s with the documented TTL. Once it 
 - PASS: the operator deletes the gateway's entry (DELETE 200)
 - PASS: the list no longer holds the entry
 - PASS: the refusal arrived before the deadline (exit 0)
-- PASS: the refusal came within the window plus one interval: 300096 ms after the first acceptance, window 300 s
-- PASS: the refusal never came before the deletion (292943 ms after it)
+- PASS: the refusal came within the window plus one interval: 300103 ms after the first acceptance, window 300 s
+- PASS: the refusal never came before the deletion (292953 ms after it)
 - PASS: no refusal was recorded before the deletion; every verification until then was accepted from the cache
-  first acceptance 2026-11-22T00:16:55.030233Z; deletion 2026-11-22T00:17:02.183+00:00; refusal 2026-11-22T00:21:55.126897Z; verifications: 61
+  first acceptance 2026-11-22T11:47:39.015359Z; deletion 2026-11-22T11:47:46.165+00:00; refusal 2026-11-22T11:52:39.118723Z; verifications: 61
 
 ```
-{"untilCode":"CHAN-MEASUREMENT-UNPUBLISHED","attempts":61,"observed":true,"firstAcceptedAt":"2026-11-22T00:16:55.030233Z","transitionAt":"2026-11-22T00:21:55.126897Z","transitionAfterMs":300096}
+{"untilCode":"CHAN-MEASUREMENT-UNPUBLISHED","attempts":61,"observed":true,"firstAcceptedAt":"2026-11-22T11:47:39.015359Z","transitionAt":"2026-11-22T11:52:39.118723Z","transitionAfterMs":300103}
 ```
 
 ## 12. An entry without a TEEM-sha256 value: not published

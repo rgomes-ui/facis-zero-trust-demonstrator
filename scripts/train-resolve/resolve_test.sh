@@ -21,7 +21,7 @@ for tool in curl jq python3 sha256sum go; do
 done
 work="$(mktemp -d)"
 pids=()
-cleanup() { for p in "${pids[@]}"; do kill "$p" 2>/dev/null || true; done; for p in "${pids[@]}"; do wait "$p" 2>/dev/null || true; done; rm -rf "$work"; }
+cleanup() { for p in ${pids[@]+"${pids[@]}"}; do kill "$p" 2>/dev/null || true; done; for p in ${pids[@]+"${pids[@]}"}; do wait "$p" 2>/dev/null || true; done; rm -rf "$work"; }   # empty-array-safe under set -u on bash 3.2
 trap cleanup EXIT
 
 free_port() { python3 -c 'import socket; s=socket.socket(); s.bind(("127.0.0.1",0)); print(s.getsockname()[1])'; }
