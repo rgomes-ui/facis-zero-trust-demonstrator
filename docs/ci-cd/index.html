@@ -63,6 +63,10 @@
                 <li class="toctree-l1"><a class="reference internal" href="../umbrella-chart/">Umbrella chart</a>
                 </li>
               </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../workload-identity/">Workload identity</a>
+                </li>
+              </ul>
               <p class="caption"><span class="caption-text">Environments</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../environments/">Overview</a>
@@ -73,9 +77,19 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../environments/application-workloads/">Application workloads</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../environments/capabilities/">Capability sheets</a>
+                  </li>
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../packaging/">Packaging and containers</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../application-services/">Application services</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../application-services-verification/">Application service verification</a>
                 </li>
               </ul>
               <ul>
@@ -91,11 +105,27 @@
                 </li>
               </ul>
               <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../demonstrator-handoff/">Demonstrator UI and identity</a>
+                </li>
+              </ul>
+              <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../identity-model/">Identity model</a>
                 </li>
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../oauth2-provider/">Connector OAuth2 provider</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../connector/">Connector service</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../token-store/">Token store</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../policy-hook/">Guard policy hook</a>
                 </li>
               </ul>
               <ul>
@@ -110,11 +140,17 @@
                 <li class="toctree-l1"><a class="reference internal" href="../tspa-publish-api/">TRAIN trust-list publishing</a>
                 </li>
               </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../train-dns/">TRAIN DNS zone</a>
+                </li>
+              </ul>
               <p class="caption"><span class="caption-text">BDD acceptance</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../bdd/">Harness and pack</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../bdd-catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../evidence-m3/">M3 evidence</a>
                   </li>
               </ul>
               <ul class="current">
@@ -132,11 +168,17 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#chart-gate">Chart gate</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#admission-reconciler">Admission reconciler</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#image-signing">Image signing</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#release-sbom">Release SBOM</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#chart-release">Chart release</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#lifecycle-scenarios-on-the-client-targets">Lifecycle scenarios on the client targets</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#cluster-reachability">Cluster reachability</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#image-scan-exceptions">Image scan exceptions</a>
     </li>
@@ -179,13 +221,22 @@
                 <li class="toctree-l1"><a class="reference internal" href="../specifications/">Specification changes</a>
                 </li>
               </ul>
+              <p class="caption"><span class="caption-text">Evidence</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../evidences/mesh-mode-upstream-state/">Mesh mode, upstream state: about</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../evidences/mesh-mode-upstream-state/upstream-state/">Mesh mode, upstream state: record</a>
+                  </li>
+              </ul>
               <p class="caption"><span class="caption-text">Architecture decisions</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../adr/">Overview</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adr/decision-ledger/">Decision ledger</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../adr/tdr-decisions/">TDR decisions ADR 001–006</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../adr/0001-service-mesh-mode-istio-ambient-with-cilium/">0001 Service mesh mode</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../adr/0001-service-mesh-mode-istio-ambient-with-cilium/">0001 Service mesh mode (superseded by 0009)</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../adr/0002-gatekeeper-external-data-provider-for-cosign-verification/">0002 Gatekeeper external data provider</a>
                   </li>
@@ -195,7 +246,13 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../adr/0005-three-cluster-reading-of-the-target-environment/">0005 Three-cluster target environment</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adr/0009-service-mesh-mode-istio-sidecar-with-cilium/">0009 Service mesh mode (sidecar, supersedes 0001)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adr/0008-envoy-ext-authz-as-the-guard-policy-hook/">0008 Guard policy hook</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../adr/0011-mock-tee-evidence-format-and-provisioning/">0011 Mock TEE evidence</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adr/0016-oauth2-library-behind-the-connector-provider-contract/">0016 OAuth2 library</a>
                   </li>
               </ul>
       </div>
@@ -249,8 +306,8 @@ and is declared as such in <a href="../specifications/#readings-and-additions">S
 </tr>
 <tr>
 <td><code>.github/workflows/sbom.yml</code></td>
-<td>schedule, release, manual</td>
-<td>Generates a CycloneDX SBOM for every release that has none and attaches it</td>
+<td>schedule, release, manual, <code>candidate/**</code> push</td>
+<td>Generates, checks and signs a CycloneDX SBOM for every release that lacks a verifying one, and attaches both</td>
 </tr>
 <tr>
 <td><code>.github/workflows/docs.yml</code></td>
@@ -265,7 +322,7 @@ and is declared as such in <a href="../specifications/#readings-and-additions">S
 <tr>
 <td><code>.github/workflows/ci.yml</code></td>
 <td>every pull request, push to <code>main</code>, published release, manual</td>
-<td>Go lint and tests, image build with the Linux assertion and a Trivy scan, chart lint and dry-run render; on a published release, the chart gate once more and the chart packaging and publication (see <a href="#chart-release">Chart release</a>)</td>
+<td>Go lint and tests, image build with the Linux assertion and a Trivy scan, chart lint and dry-run render, the admission catalogue and the admission reconciler each on a kind cluster (see <a href="#admission-reconciler">Admission reconciler</a>); on a published release, the chart gate once more and the chart packaging and publication (see <a href="#chart-release">Chart release</a>)</td>
 </tr>
 <tr>
 <td><code>.github/workflows/release.yml</code></td>
@@ -276,6 +333,21 @@ and is declared as such in <a href="../specifications/#readings-and-additions">S
 <td><code>.github/workflows/measurement-determinism.yml</code></td>
 <td>pull request and push to <code>main</code> touching the check, manual</td>
 <td>Measures one fixture on a hosted runner, in a container, and on a deliberately divergent checkout, and requires the normalised measurement to be the same on all three</td>
+</tr>
+<tr>
+<td><code>.github/workflows/token-store.yml</code></td>
+<td>pull requests touching the token store, the connector, the Participant, the Protected Resource (their services and their <code>cmd/</code> entry points), the shared <code>internal/</code> packages, the images of the token store, the connector, the Participant and the Protected Resource, the chart or the pinned images; pushes to <code>main</code>; manual</td>
+<td>Runs the whole token path against a PostgreSQL and an OpenBao from the pinned images, once with opaque and once with signed access tokens, and fails on any skipped test: the schema migrations and queries, the store (replay check, acquisition and its recovery, substitution, renewal) with the real connector binary as the peer zone, the connector's conformance suite on the database stores, the shared packages, and the Participant and Protected Resource end to end through the real connector, their <code>cmd/</code> entry points included; then the chart's lifecycle (install, upgrade, uninstall) and the service's readiness against PostgreSQL and OpenBao on kind; the records are the run's artefact and the verdict goes to the job summary</td>
+</tr>
+<tr>
+<td><code>.github/workflows/policy-hook.yml</code></td>
+<td>pull requests touching the policy-hook probe, its script, the pinned Envoy image or the policy fixtures; manual</td>
+<td>Runs the guard policy-hook proofs (<code>scripts/verify-policy-hook/verify.sh</code>) against Envoy from the pinned image, uploads the records as an artefact and writes the verdict and the latency numbers to the job summary</td>
+</tr>
+<tr>
+<td><code>.github/workflows/connector.yml</code></td>
+<td>pull requests touching the connector service, the shared client and DPoP packages, the images of the connector and the token store, either chart, the proof or the pinned images; pushes to <code>main</code>; manual</td>
+<td>Installs the token-store and connector charts on kind against a PostgreSQL and an OpenBao from the pinned images, waits for the connector to be ready on all four checks, registers a client through the registrar with the connector's own image, has the policy refuse a registration with its specific error, and reads both decisions back from the audit trail and the security-state feed; the records are the run's artefact and the verdict goes to the job summary</td>
 </tr>
 </tbody>
 </table>
@@ -372,16 +444,19 @@ OAuth2 provider is built on, requires Go 1.27.</p>
 </tr>
 </tbody>
 </table>
-<p>The last two are why the licence scan and the SBOM run locally. The local jobs do what the shared
-ones do — the same Eclipse Dash tool with the same review arguments, the same <code>cyclonedx-gomod</code>
-version and the same rule of attaching an SBOM to every release that lacks one — with the pinned
-actions and declared permissions this repository requires of its own workflows. They can go back to
+<p>The last two are why the licence scan and the SBOM run locally. The licence job does what the shared
+one does — the same Eclipse Dash tool with the same review arguments — and the SBOM job keeps the
+shared rule of attaching an SBOM to every release that lacks one, with the pinned actions and declared
+permissions this repository requires of its own workflows. The SBOM job goes further than the shared
+one: it uses the pinned Syft, the same tool as the image SBOMs, checks the result and signs it (see
+<a href="#release-sbom">Release SBOM</a>). They can go back to
 being references once the shared workflows accept a Go version or read <code>go.mod</code>; that is a change to
 propose in <code>eclipse-xfsc/dev-ops</code>.</p>
 <h2 id="chart-gate">Chart gate<a class="headerlink" href="#chart-gate" title="Permanent link">&para;</a></h2>
 <p>No release candidate is built unless every chart passes (TDR-BDD-11). The <code>chart-gate</code> job of
 <code>release.yml</code> creates a disposable kind cluster, installs the CRDs the charts render against (Cilium's
-network policies and Gatekeeper's external-data <code>Provider</code>, pinned in <code>scripts/tools/pins.env</code>), and
+network policies, Gatekeeper's external-data <code>Provider</code> and Argo CD's <code>Application</code> and <code>AppProject</code>,
+each from a chart or manifest pinned in <code>scripts/tools/pins.env</code>), and
 runs the row in cluster mode: <code>scripts/ci/check-charts.sh --server-dry-run</code> lints, renders and
 dry-runs every chart against that API server, and two deliberately broken charts under
 <code>features/fixtures/broken-charts/</code> must be refused by the check each targets — one by <code>helm lint</code>,
@@ -398,6 +473,19 @@ as in the pull-request job, the script records the server dry-run as not run, ne
 <p>The gate and the secrets baseline (TDR-BDD-08) run on a disposable cluster in <code>release.yml</code>, which
 decides both rows with a sheet of its own; the pull-request sheet and the client-target sheets list
 them as not run.</p>
+<h2 id="admission-reconciler">Admission reconciler<a class="headerlink" href="#admission-reconciler" title="Permanent link">&para;</a></h2>
+<p>The <code>admission-gitops</code> job proves the path from Git to the cluster that
+<a href="../deployment/argocd/README.md">deployment/argocd</a> builds: a kind cluster with Gatekeeper and the
+pinned Argo CD, handed the admission policy of the revision under test by <code>scripts/argocd/install.sh</code>,
+fetched from the repository the revision came from (the pull request's head repository and commit, or
+the pushed commit). The job checks out that same commit, not the merge commit, so the catalogue the
+cluster converged to can be compared file by file with the checkout. It then proves what the zones
+rely on: every Application <code>Synced/Healthy</code>, the zone's repository prefix patched into the
+allowed-repositories constraint, a hand-edited constraint put back (<code>scripts/argocd/drift-check.sh</code>),
+a hand-edited child Application put back by its parent, and one <code>argocd_app_info</code> series with
+<code>sync_status="Synced"</code> per Application in the controller's metrics. What it cannot prove on a
+disposable cluster is a change <em>merged</em> after the install reaching the cluster: that is the same
+reconciliation the self-heal exercises, and it is observed on the zones after a merge.</p>
 <h2 id="image-signing">Image signing<a class="headerlink" href="#image-signing" title="Permanent link">&para;</a></h2>
 <p>The candidate job of <code>release.yml</code> builds every image under <code>deployment/docker/</code> for <code>linux/amd64</code>,
 labels it <code>eu.facis.ztd.signing-key=interim</code> and pushes it to <code>ghcr.io/&lt;owner&gt;/&lt;repository&gt;/&lt;name&gt;</code>.
@@ -422,6 +510,30 @@ the committed public key, so a missing environment, secret or key file stops the
 is pushed. GHCR creates new packages as private; the job verifies them with its own token, but a
 cluster pulls and verifies anonymously, so the candidate packages must be made public in the package
 settings (once per package) before a cluster can admit them.</p>
+<h2 id="release-sbom">Release SBOM<a class="headerlink" href="#release-sbom" title="Permanent link">&para;</a></h2>
+<p><code>sbom.yml</code> gives every published release two assets: <code>sbom.json</code>, the CycloneDX inventory of the Go
+module at the release tag, and <code>sbom.json.sig</code>, its signature. For each release, <code>scripts/supplychain/repo-sbom.sh</code>:</p>
+<ol>
+<li>scans the tag's checkout with the pinned Syft, Go module only (the images have their own SBOMs);</li>
+<li>checks it with <code>go run ./cmd/sbomcheck</code>: valid CycloneDX against the schemas admission uses, and every
+   module the tag's tidy <code>go.mod</code> requires present at the required version, replacements resolved. With
+   module graph pruning a tidy <code>go.mod</code> lists every module that supplies a package to any build or test, on
+   any platform and build tag, so transitive dependencies are included;</li>
+<li>signs it with <code>cosign sign-blob</code> and the interim key, in the profile the images use (key-based, no
+   transparency log), and verifies the signature before anything is uploaded.</li>
+</ol>
+<p>A release counts as done only when both assets are attached and the signature verifies. A release with
+no SBOM, an unsigned one, a half-finished upload or a pair that does not verify is regenerated from its
+tag on the next run; the monthly run, or one started by hand, covers every release.</p>
+<p>To verify a release's SBOM:</p>
+<pre><code class="language-bash">gh release download &lt;tag&gt; --pattern 'sbom.json*'
+cosign verify-blob --key docs/contracts/keys/interim-cosign.pub --insecure-ignore-tlog=true \
+  --signature sbom.json.sig sbom.json
+</code></pre>
+<p>The interim key is replaced by the client key with the rest of the signing chain. The key lives in the
+<code>release</code> environment; for the run that a published release starts — which runs on the tag — to reach
+it, the environment must admit the release tags (<code>v*</code>) as well as <code>main</code> and <code>candidate/*</code>. That is a
+repository setting; until it is applied, the monthly or a manual run signs new releases.</p>
 <h2 id="chart-release">Chart release<a class="headerlink" href="#chart-release" title="Permanent link">&para;</a></h2>
 <p>The Technical Development Requirements deliver the Helm charts with each release. The candidate
 stage above creates no tag and no release; the charts are delivered when a release is published, by
@@ -474,13 +586,27 @@ basis column says what each row was proven with — for example the fixture rele
 (the read-only observer identity — never an administrator credential), <code>BDD_&lt;KEY&gt;_ORCE_URL</code>,
 <code>BDD_&lt;KEY&gt;_ORCE_READ_TOKEN</code>, <code>BDD_&lt;KEY&gt;_ORCE_HTTP_USER</code> and <code>BDD_&lt;KEY&gt;_ORCE_HTTP_PASS</code>, and as a
 repository variable <code>BDD_&lt;KEY&gt;_ORCE_LOGS_CMD</code>, plus its entry in the job's matrix.</p>
+<h2 id="cluster-reachability">Cluster reachability<a class="headerlink" href="#cluster-reachability" title="Permanent link">&para;</a></h2>
+<p>The <code>cluster-reachability</code> job checks, for each client cluster (IONOS, OSC zone A, OSC zone B), that
+the API server answers the pipeline and that the observer identity authenticates (<code>kubectl version</code>,
+<code>kubectl auth whoami</code>). It runs on pushes to <code>main</code>, on releases and on demand, never on pull requests,
+and does not depend on <code>BDD_CLUSTER_ENABLED</code>. A target is checked once its secret
+<code>BDD_&lt;KEY&gt;_OBSERVER_KUBECONFIG</code> is set (<code>IONOS</code>, <code>ZONE_A</code>, <code>ZONE_B</code>); until then the run says it was
+not checked, and never that it was reachable.</p>
+<p>The OSC zones have no BDD pool, so their observer is the service account in
+<a href="https://github.com/eclipse-xfsc/facis-zero-trust-demonstrator/blob/main/deployment/ci/reachability-observer.yaml">deployment/ci/reachability-observer.yaml</a>: the
+manifest grants it nothing, so it holds only what every authenticated identity is bound to by default
+(API discovery, the server version, a review of its own access). A cluster administrator applies it,
+checks its effective rights (<code>kubectl auth can-i --list --as=system:serviceaccount:ztd-ci:ztd-ci-observer</code>),
+builds the kubeconfig from the token in <code>ztd-ci/ztd-ci-observer-token</code> and hands it to a maintainer
+for the secret. The token does not expire; deleting that Secret revokes it.</p>
 <h2 id="image-scan-exceptions">Image scan exceptions<a class="headerlink" href="#image-scan-exceptions" title="Permanent link">&para;</a></h2>
 <p>Every image is scanned and a HIGH or CRITICAL finding fails the build. When a finding sits in an
 upstream component that this project cannot fix in its own layer, a <code>scan-exception.json</code> next to
 the image's Dockerfile may exclude named paths from the gate. It must carry an expiry date, the
 reason and the tracking of the upstream fix; the job prints it into the run summary and fails the
-build once it has expired. The ORCE image carries one for the upstream ORCE runtime, kubectl and the bundled Helm,
-expiring 13 November 2026.</p>
+build once it has expired. The ORCE image carries one for the upstream ORCE runtime and kubectl,
+expiring 16 December 2026; the bundled Helm stays under the gate.</p>
 <h2 id="repository-protection-and-least-privilege">Repository protection and least privilege<a class="headerlink" href="#repository-protection-and-least-privilege" title="Permanent link">&para;</a></h2>
 <p>The demonstrator applies its own zero-trust posture to the delivery machine (ZT-56): nothing reaches
 <code>main</code> unreviewed, and no pipeline holds a credential wider than the job in front of it needs.</p>
@@ -577,7 +703,7 @@ branch — a one-time repository setting a maintainer applies. The folder may be
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../bdd-catalogue/" class="btn btn-neutral float-left" title="Catalogue"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../evidence-m3/" class="btn btn-neutral float-left" title="M3 evidence"><span class="icon icon-circle-arrow-left"></span> Previous</a>
         <a href="../secrets/" class="btn btn-neutral float-right" title="Secrets">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
@@ -606,7 +732,7 @@ branch — a one-time repository setting a maintainer applies. The folder may be
         </span>
     
     
-      <span><a href="../bdd-catalogue/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../evidence-m3/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
       <span><a href="../secrets/" style="color: #fcfcfc">Next &raquo;</a></span>

@@ -63,6 +63,10 @@
                 <li class="toctree-l1"><a class="reference internal" href="../umbrella-chart/">Umbrella chart</a>
                 </li>
               </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../workload-identity/">Workload identity</a>
+                </li>
+              </ul>
               <p class="caption"><span class="caption-text">Environments</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../environments/">Overview</a>
@@ -73,9 +77,19 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../environments/application-workloads/">Application workloads</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../environments/capabilities/">Capability sheets</a>
+                  </li>
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../packaging/">Packaging and containers</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../application-services/">Application services</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../application-services-verification/">Application service verification</a>
                 </li>
               </ul>
               <ul>
@@ -91,11 +105,27 @@
                 </li>
               </ul>
               <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../demonstrator-handoff/">Demonstrator UI and identity</a>
+                </li>
+              </ul>
+              <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../identity-model/">Identity model</a>
                 </li>
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../oauth2-provider/">Connector OAuth2 provider</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../connector/">Connector service</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../token-store/">Token store</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../policy-hook/">Guard policy hook</a>
                 </li>
               </ul>
               <ul>
@@ -108,6 +138,10 @@
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../tspa-publish-api/">TRAIN trust-list publishing</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../train-dns/">TRAIN DNS zone</a>
                 </li>
               </ul>
               <p class="caption"><span class="caption-text">BDD acceptance</span></p>
@@ -150,6 +184,8 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../bdd-catalogue/">Catalogue</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../evidence-m3/">M3 evidence</a>
+                  </li>
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../ci-cd/">CI/CD</a>
@@ -175,13 +211,22 @@
                 <li class="toctree-l1"><a class="reference internal" href="../specifications/">Specification changes</a>
                 </li>
               </ul>
+              <p class="caption"><span class="caption-text">Evidence</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../evidences/mesh-mode-upstream-state/">Mesh mode, upstream state: about</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../evidences/mesh-mode-upstream-state/upstream-state/">Mesh mode, upstream state: record</a>
+                  </li>
+              </ul>
               <p class="caption"><span class="caption-text">Architecture decisions</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../adr/">Overview</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adr/decision-ledger/">Decision ledger</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../adr/tdr-decisions/">TDR decisions ADR 001–006</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../adr/0001-service-mesh-mode-istio-ambient-with-cilium/">0001 Service mesh mode</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../adr/0001-service-mesh-mode-istio-ambient-with-cilium/">0001 Service mesh mode (superseded by 0009)</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../adr/0002-gatekeeper-external-data-provider-for-cosign-verification/">0002 Gatekeeper external data provider</a>
                   </li>
@@ -191,7 +236,13 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../adr/0005-three-cluster-reading-of-the-target-environment/">0005 Three-cluster target environment</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adr/0009-service-mesh-mode-istio-sidecar-with-cilium/">0009 Service mesh mode (sidecar, supersedes 0001)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adr/0008-envoy-ext-authz-as-the-guard-policy-hook/">0008 Guard policy hook</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../adr/0011-mock-tee-evidence-format-and-provisioning/">0011 Mock TEE evidence</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adr/0016-oauth2-library-behind-the-connector-provider-contract/">0016 OAuth2 library</a>
                   </li>
               </ul>
       </div>
@@ -344,6 +395,18 @@ Scenario: Successful deployment [fixture release]
 <p>Only the row tag drives coverage. A tag shaped like a row id that matches no row in
 <code>features/annex-rows.txt</code> <strong>fails the run</strong> — a typo would otherwise leave the scenario passing
 while proving nothing about the row it was meant to cover.</p>
+<p>The plane-separation design check — <em>The plane-separation matrix is complete and consistent at
+both layers</em>, in <code>features/go/plane-separation-design.feature</code> — is one of those regression
+scenarios. It runs strict in CI and asserts that the matrices in the
+<a href="../architecture/#6-plane-separation-and-staleness-windows">plane-separation section</a> are complete
+and consistent: every path from the data plane to the management plane is disposed at both the
+network policy layer and the service mesh layer, in agreement with its verdict, and the catch-all
+row denies every management-plane destination without a row of its own. It reaches no network, so
+it carries no row tag and ZT-55 stays pending. The row is covered by the reachability scenario,
+not yet written, which runs when the matrix is executed against a cluster and asserts that a
+management-plane destination without a row is unreachable from the data plane at both layers. It
+is the scenario the section refers to when it says what the plane-separation test asserts for a
+destination it probes and does not find listed.</p>
 <h3 id="running-one-annex-row">Running one Annex row<a class="headerlink" href="#running-one-annex-row" title="Permanent link">&para;</a></h3>
 <pre><code class="language-bash">BDD_MODE=catalogue go test ./internal/bdd -godog.tags=@ZT-56   # a pending Go row
 npm run bdd:row -- @ZT-17                                      # a JavaScript row, strict:
@@ -617,7 +680,16 @@ and every evidence directory records that it is fixture evidence. A fixture pass
 acceptance of the umbrella release. The umbrella chart (<code>deployment/helm/ztd</code>) is cluster-scoped: it
 creates the plane namespaces and a cluster role, which the pool-confined deployer cannot do. Before
 it may replace the fixture, those cluster-scoped deploy rights must be designed
-(<a href="../umbrella-chart/#release-namespace-and-teardown">Umbrella chart</a>); it then needs its own run.</p>
+(<a href="../umbrella-chart/#release-namespace-and-teardown">Umbrella chart</a>); it then needs its own run.
+The ownership and removal of CRDs is answered by the shape of the zone: one Helm release per upstream
+chart, so every CRD is installed, upgraded and removed by the release that ships it in its
+templates (<code>spire-crds</code>, Istio's <code>base</code>), and the umbrella itself ships none. <code>spire-crds</code> drops
+the chart's <code>helm.sh/resource-policy: keep</code> in its values, so <code>helm uninstall</code> removes its CRDs;
+Istio's <code>base</code> sets that policy in its files, so the zone installer deletes that release's CRDs
+after uninstalling it. The zone installer,
+<code>scripts/install-zone/install.sh</code>, runs the releases in order through the same lifecycle step this
+pack exercises, and its uninstall leaves no SPIRE or Istio CRD behind, as the teardown section of
+every run of the mesh identity proof shows (see <code>scripts/verify-mesh-identity/README.md</code>).</p>
 <h3 id="evidence">Evidence<a class="headerlink" href="#evidence" title="Permanent link">&para;</a></h3>
 <p>Per row, target and example: <code>bundles/bdd/evidence/bdd-tdr-00n/&lt;target&gt;/&lt;example&gt;/</code> holds the
 commands and acknowledgements, the ORCE context entry of each command (with the masked Helm output,
@@ -634,7 +706,7 @@ requirement row. Bundles are versioned and immutable once a gate has consumed th
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../tspa-publish-api/" class="btn btn-neutral float-left" title="TRAIN trust-list publishing"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../train-dns/" class="btn btn-neutral float-left" title="TRAIN DNS zone"><span class="icon icon-circle-arrow-left"></span> Previous</a>
         <a href="../bdd-catalogue/" class="btn btn-neutral float-right" title="Catalogue">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
@@ -663,7 +735,7 @@ requirement row. Bundles are versioned and immutable once a gate has consumed th
         </span>
     
     
-      <span><a href="../tspa-publish-api/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../train-dns/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
       <span><a href="../bdd-catalogue/" style="color: #fcfcfc">Next &raquo;</a></span>

@@ -63,6 +63,10 @@
                 <li class="toctree-l1"><a class="reference internal" href="../umbrella-chart/">Umbrella chart</a>
                 </li>
               </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../workload-identity/">Workload identity</a>
+                </li>
+              </ul>
               <p class="caption"><span class="caption-text">Environments</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../environments/">Overview</a>
@@ -73,9 +77,19 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../environments/application-workloads/">Application workloads</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../environments/capabilities/">Capability sheets</a>
+                  </li>
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../packaging/">Packaging and containers</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../application-services/">Application services</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../application-services-verification/">Application service verification</a>
                 </li>
               </ul>
               <ul>
@@ -91,11 +105,27 @@
                 </li>
               </ul>
               <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../demonstrator-handoff/">Demonstrator UI and identity</a>
+                </li>
+              </ul>
+              <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../identity-model/">Identity model</a>
                 </li>
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../oauth2-provider/">Connector OAuth2 provider</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../connector/">Connector service</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../token-store/">Token store</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../policy-hook/">Guard policy hook</a>
                 </li>
               </ul>
               <ul>
@@ -110,11 +140,17 @@
                 <li class="toctree-l1"><a class="reference internal" href="../tspa-publish-api/">TRAIN trust-list publishing</a>
                 </li>
               </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../train-dns/">TRAIN DNS zone</a>
+                </li>
+              </ul>
               <p class="caption"><span class="caption-text">BDD acceptance</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../bdd/">Harness and pack</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../bdd-catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../evidence-m3/">M3 evidence</a>
                   </li>
               </ul>
               <ul>
@@ -147,13 +183,22 @@
     </ul>
                 </li>
               </ul>
+              <p class="caption"><span class="caption-text">Evidence</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../evidences/mesh-mode-upstream-state/">Mesh mode, upstream state: about</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../evidences/mesh-mode-upstream-state/upstream-state/">Mesh mode, upstream state: record</a>
+                  </li>
+              </ul>
               <p class="caption"><span class="caption-text">Architecture decisions</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../adr/">Overview</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adr/decision-ledger/">Decision ledger</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../adr/tdr-decisions/">TDR decisions ADR 001–006</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../adr/0001-service-mesh-mode-istio-ambient-with-cilium/">0001 Service mesh mode</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../adr/0001-service-mesh-mode-istio-ambient-with-cilium/">0001 Service mesh mode (superseded by 0009)</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../adr/0002-gatekeeper-external-data-provider-for-cosign-verification/">0002 Gatekeeper external data provider</a>
                   </li>
@@ -163,7 +208,13 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../adr/0005-three-cluster-reading-of-the-target-environment/">0005 Three-cluster target environment</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adr/0009-service-mesh-mode-istio-sidecar-with-cilium/">0009 Service mesh mode (sidecar, supersedes 0001)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adr/0008-envoy-ext-authz-as-the-guard-policy-hook/">0008 Guard policy hook</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../adr/0011-mock-tee-evidence-format-and-provisioning/">0011 Mock TEE evidence</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adr/0016-oauth2-library-behind-the-connector-provider-contract/">0016 OAuth2 library</a>
                   </li>
               </ul>
       </div>
@@ -210,9 +261,9 @@ the decision.</p>
 <tbody>
 <tr>
 <td>SRS 2.3.3 — secure service mesh with SPIFFE/SPIRE, mode unspecified</td>
-<td>Istio <strong>Ambient</strong> with Cilium as CNI, <code>cni.exclusive=false</code>, one named L7 enforcement owner per traffic path</td>
-<td>The SRS fixes the identity model but not the data-plane mode; leaving it unfixed would put mesh and CNI in contention for L7 enforcement</td>
-<td><a href="../adr/0001-service-mesh-mode-istio-ambient-with-cilium/">ADR-0001</a></td>
+<td>Istio <strong>sidecar</strong> mode with Cilium as CNI, <code>cni.exclusive=false</code>, one named L7 enforcement owner per traffic path, SVIDs consumed by the sidecar over SDS; ambient parked</td>
+<td>The SRS fixes the identity model but not the data-plane mode; the ambient baseline first chosen cannot take SPIRE-issued identities with community Istio (SRS § 5.1.2, ZT-24), so the pre-approved fallback applies</td>
+<td><a href="../adr/0009-service-mesh-mode-istio-sidecar-with-cilium/">ADR-0009</a> (supersedes <a href="../adr/0001-service-mesh-mode-istio-ambient-with-cilium/">ADR-0001</a>)</td>
 </tr>
 <tr>
 <td>ZT-10, ZT-12, ZT-37 — admission must refuse unsigned images</td>
@@ -224,7 +275,7 @@ the decision.</p>
 <td>ZT-21, ZT-22 — DCR, OID4VP-derived tokens, DPoP-bound storage, with Keycloak as identity provider</td>
 <td>The OAuth2 authorisation surface is implemented in the Go Connector; Keycloak is used unmodified for realm, client, role and scope management</td>
 <td>Keycloak's DPoP support is preview and OID4VCI experimental; the authoritative decision stays on the enforcement path rather than depending on preview features</td>
-<td><a href="../adr/0003-oauth2-authorisation-surface-in-the-go-connector/">ADR-0003</a></td>
+<td><a href="../adr/0003-oauth2-authorisation-surface-in-the-go-connector/">ADR-0003</a> · <a href="../adr/0016-oauth2-library-behind-the-connector-provider-contract/">ADR-0016</a></td>
 </tr>
 <tr>
 <td>ZT-11 — key material stored in OpenBao</td>
@@ -252,7 +303,7 @@ the decision.</p>
 </tr>
 <tr>
 <td>TDR, OSS microservice repository — <code>.github/workflows</code>: the Eclipse Dash licence scanner and the build workflows are referenced from the standard organisation workflows</td>
-<td>The Go tests reference the shared <code>go-test.yml</code>. The licence scan and the release SBOM run as workflows in this repository that do what the shared ones do — the same Eclipse Dash tool with the same review arguments, the same <code>cyclonedx-gomod</code> version and the same rule of attaching an SBOM to every release — with the pinned actions and declared permissions this repository requires of its own workflows</td>
+<td>The Go tests reference the shared <code>go-test.yml</code>. The licence scan and the release SBOM run as workflows in this repository that do what the shared ones do — the same Eclipse Dash tool with the same review arguments, and the same rule of attaching an SBOM to every release, which here is generated with the pinned Syft, checked and signed (see <a href="../ci-cd/#release-sbom">CI/CD</a>) — with the pinned actions and declared permissions this repository requires of its own workflows</td>
 <td>The shared scanner sets up Go 1.21 and the shared SBOM generator Go 1.23.8, with no input to change either, and an older Go refuses a module whose <code>go</code> directive is newer — this module declares Go 1.27. The scanner's Go step only builds a module list it never uses; the Eclipse Dash tool reads <code>go.sum</code> directly. The shared scanner also fetches its jar through a redirect that now answers 404 with an HTML page, which surfaces as <code>invalid or corrupt jarfile</code></td>
 <td><a href="../ci-cd/#go-version">CI/CD — Go version</a> · declared here, pending confirmation; the two workflows go back to references once the shared ones accept a Go version or read <code>go.mod</code></td>
 </tr>
@@ -269,30 +320,45 @@ the decision.</p>
 <td><a href="../adr/0011-mock-tee-evidence-format-and-provisioning/">ADR-0011 § 3</a></td>
 </tr>
 <tr>
+<td>ZT-55 — management-plane components "accessible only via dedicated control channels" and not "reachable from the data plane network"; the separation "enforced at both the Kubernetes network policy layer and the service mesh layer"; compromise of the data plane granting "no access to management plane components"</td>
+<td>The <code>meshControlPlane</code> opening admits every pod of every plane namespace that carries the mesh label (<code>ztd-mgmt</code> among them by default) to istiod on port 15012 (xDS) and to no other port. The allow matrix does not yet dispose this path, and it meets none of the three clauses as written: it is not a dedicated control channel; it has no mesh layer, since an AuthorizationPolicy is enforced by the destination's proxy and istiod runs without one; and a compromised pod gains an xDS session (for its own identity, if istiod's default client authentication holds) and can obtain from istiod's CA, which answers on the same port and cannot be switched off, a certificate that every meshed peer refuses. That istiod serves only clients it has authenticated is Istio's default, neither pinned in <code>deployment/helm/values/istiod.yaml</code> nor proven by the evidence</td>
+<td>The mesh's proxies receive their configuration, the matrix's AuthorizationPolicies included, over xDS; without the opening no proxy is configured and the mesh layer ZT-55 requires does not exist</td>
+<td><a href="../architecture/#declared-openings-of-the-network-baseline">Declared openings</a> · <strong>proposed</strong>, approval of the Technical Design Authority and the Project Leader pending; a follow-up adds the allow-matrix row, pins istiod's client authentication and proves it</td>
+</tr>
+<tr>
 <td>ZT-35, ZT-64 — expected launch digests uploaded to TRAIN by the pipeline and fetched by the peer</td>
 <td>TSPA's trust-list entry has no digest field; the value must ride in an existing <code>Type</code>/<code>Value</code> list, with the connector's identifier in <code>ServiceTypeIdentifier</code> (the TCR lookup key)</td>
 <td>TRAIN's data model was built for credential issuers; the SRS assumes TRAIN stores measurements without fixing where</td>
 <td><a href="../tspa-publish-api/">TRAIN trust-list publishing</a> · <a href="../adr/0011-mock-tee-evidence-format-and-provisioning/">ADR-0011 §§ 4.2–4.3</a></td>
 </tr>
+<tr>
+<td>TRAIN glossary and SRS 2.7 — trust anchored in DNS; the TRAIN zone created and reachable</td>
+<td>The zone is signed from its first start and the TCR validates DNSSEC, but the DS is published at the parent only after key persistence and a working re-sign job are proven on the deployed zone manager; until then resolvers treat the zone as insecure</td>
+<td>The zone manager as shipped loses its keys with its volume and never re-signs; a DS published before that is fixed turns either event into a refusal of the whole zone, which the TCR reports as an empty trust list</td>
+<td><a href="../train-dns/">TRAIN DNS zone</a></td>
+</tr>
 </tbody>
 </table>
 <h2 id="deviation-status">Deviation status<a class="headerlink" href="#deviation-status" title="Permanent link">&para;</a></h2>
-<p>Every reading above is declared rather than assumed. The five governing ADRs were submitted to FACIS
-as the F-05 deviation package and the OpenBao licence exception as F-07; both are open at the time of
-writing. A reading found after that package was submitted is recorded here as soon as it is found and
+<p>Every reading above is declared rather than assumed. The five governing ADRs of 2026-09-08 (0001 to
+0005) were submitted to FACIS as the F-05 deviation package and the OpenBao licence exception as F-07;
+both are open at the time of writing. ADR-0009, which supersedes 0001 through the fallback clause that
+record foresaw, was proposed after the package was submitted and accepted on 2026-10-23, and is
+carried into its next update. A reading found after that package was submitted is recorded here as soon as it is found and
 carried into the next update of the package. A reading that FACIS declines is handled as a plan change
 under the written-agreement rule, not absorbed into the implementation.</p>
-<p>Four readings postdate that package and are not yet part of a submitted one: the CI workflow reading,
+<p>Five readings postdate that package and are not yet part of a submitted one: the CI workflow reading,
 added when the first Go module arrived; the reuse of the attestation component's own report format for
-the mock attestation; the channel binding the report actually carries; and the placement of the
-expected launch digest in the trust list. They are declared here so that they are not mistaken for
-omissions.</p>
+the mock attestation; the channel binding the report actually carries; the placement of the expected
+launch digest in the trust list; and the meshed namespaces' opening to istiod's xDS port under
+ZT-55, which awaits the approval of the Technical Design Authority and the Project Leader. They are
+declared here so that they are not mistaken for omissions.</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href="../licenses/" class="btn btn-neutral float-left" title="Licenses"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../adr/" class="btn btn-neutral float-right" title="Overview">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../evidences/mesh-mode-upstream-state/" class="btn btn-neutral float-right" title="Mesh mode, upstream state: about">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -323,7 +389,7 @@ omissions.</p>
       <span><a href="../licenses/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../adr/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../evidences/mesh-mode-upstream-state/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

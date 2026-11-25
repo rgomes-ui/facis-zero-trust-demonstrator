@@ -63,6 +63,10 @@
                 <li class="toctree-l1"><a class="reference internal" href="../umbrella-chart/">Umbrella chart</a>
                 </li>
               </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../workload-identity/">Workload identity</a>
+                </li>
+              </ul>
               <p class="caption"><span class="caption-text">Environments</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../environments/">Overview</a>
@@ -73,9 +77,19 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../environments/application-workloads/">Application workloads</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../environments/capabilities/">Capability sheets</a>
+                  </li>
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../packaging/">Packaging and containers</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../application-services/">Application services</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../application-services-verification/">Application service verification</a>
                 </li>
               </ul>
               <ul>
@@ -91,11 +105,27 @@
                 </li>
               </ul>
               <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../demonstrator-handoff/">Demonstrator UI and identity</a>
+                </li>
+              </ul>
+              <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../identity-model/">Identity model</a>
                 </li>
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../oauth2-provider/">Connector OAuth2 provider</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../connector/">Connector service</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../token-store/">Token store</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../policy-hook/">Guard policy hook</a>
                 </li>
               </ul>
               <ul>
@@ -110,11 +140,17 @@
                 <li class="toctree-l1"><a class="reference internal" href="../tspa-publish-api/">TRAIN trust-list publishing</a>
                 </li>
               </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../train-dns/">TRAIN DNS zone</a>
+                </li>
+              </ul>
               <p class="caption"><span class="caption-text">BDD acceptance</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../bdd/">Harness and pack</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../bdd-catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../evidence-m3/">M3 evidence</a>
                   </li>
               </ul>
               <ul>
@@ -133,6 +169,10 @@
                 <li class="toctree-l1 current"><a class="reference internal current" href="#">OSS dependencies</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#licence-compliance">Licence compliance</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#pending-eclipse-ip-review">Pending Eclipse IP review</a>
+    </li>
+        </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#licence-exceptions">Licence exceptions</a>
         <ul>
@@ -148,7 +188,7 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#supply-chain-policy-and-test-tooling">Supply-chain, policy and test tooling</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#go-dependencies-being-added">Go dependencies being added</a>
+    <li class="toctree-l2"><a class="reference internal" href="#identity-and-service-mesh">Identity and service mesh</a>
     </li>
     </ul>
                 </li>
@@ -161,13 +201,22 @@
                 <li class="toctree-l1"><a class="reference internal" href="../specifications/">Specification changes</a>
                 </li>
               </ul>
+              <p class="caption"><span class="caption-text">Evidence</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../evidences/mesh-mode-upstream-state/">Mesh mode, upstream state: about</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../evidences/mesh-mode-upstream-state/upstream-state/">Mesh mode, upstream state: record</a>
+                  </li>
+              </ul>
               <p class="caption"><span class="caption-text">Architecture decisions</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../adr/">Overview</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adr/decision-ledger/">Decision ledger</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../adr/tdr-decisions/">TDR decisions ADR 001–006</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../adr/0001-service-mesh-mode-istio-ambient-with-cilium/">0001 Service mesh mode</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../adr/0001-service-mesh-mode-istio-ambient-with-cilium/">0001 Service mesh mode (superseded by 0009)</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../adr/0002-gatekeeper-external-data-provider-for-cosign-verification/">0002 Gatekeeper external data provider</a>
                   </li>
@@ -177,7 +226,13 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../adr/0005-three-cluster-reading-of-the-target-environment/">0005 Three-cluster target environment</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adr/0009-service-mesh-mode-istio-sidecar-with-cilium/">0009 Service mesh mode (sidecar, supersedes 0001)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adr/0008-envoy-ext-authz-as-the-guard-policy-hook/">0008 Guard policy hook</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../adr/0011-mock-tee-evidence-format-and-provisioning/">0011 Mock TEE evidence</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adr/0016-oauth2-library-behind-the-connector-provider-contract/">0016 OAuth2 library</a>
                   </li>
               </ul>
       </div>
@@ -208,13 +263,21 @@
 <p>Third-party components the demonstrator depends on, and the upstream projects it integrates with
 but does not own.</p>
 <h2 id="licence-compliance">Licence compliance<a class="headerlink" href="#licence-compliance" title="Permanent link">&para;</a></h2>
-<p>Every dependency clears Eclipse Dash before it ships. The scan runs on every pull request and a
-dependency Dash marks <code>restricted</code> blocks the merge; anything Dash cannot clear automatically goes
+<p>Every dependency clears Eclipse Dash before it ships. The scan runs on every pull request, and a
+dependency Dash marks <code>restricted</code> fails the licence gate — which blocks the merge once the gate is a
+required check of the <code>main</code> ruleset (<a href="../ci-cd/#branch-protection">CI/CD</a>); anything Dash cannot clear automatically goes
 to the Eclipse IP team for review. See <a href="../ci-cd/">CI/CD</a>.</p>
 <p>A dependency under a licence the project cannot accept is replaced, not waived. The exception below
 is the only other route, and it is not a way to waive the rule.</p>
 <p>Generated inventories — the CycloneDX SBOM and the Dash summary — are published with each release
 and are the authoritative list. This page records the components chosen and why.</p>
+<h3 id="pending-eclipse-ip-review">Pending Eclipse IP review<a class="headerlink" href="#pending-eclipse-ip-review" title="Permanent link">&para;</a></h3>
+<p>Dependencies Dash cannot clear yet. They are not exceptions: each stays here until Eclipse approves it,
+and is removed then. None is pending: the last two, <code>golang.org/x/text</code> v0.42.0
+(<a href="https://gitlab.eclipse.org/eclipsefdn/emo-team/iplab/-/work_items/32075">iplab #32075</a>) and
+<code>github.com/santhosh-tekuri/jsonschema/v6</code> v6.0.3
+(<a href="https://gitlab.eclipse.org/eclipsefdn/emo-team/iplab/-/work_items/32387">iplab #32387</a>), were approved
+by 23 October 2026.</p>
 <h2 id="licence-exceptions">Licence exceptions<a class="headerlink" href="#licence-exceptions" title="Permanent link">&para;</a></h2>
 <p>When a component under a non-Apache-2.0-compatible licence is <strong>prescribed by the requirements</strong> and
 therefore cannot be replaced, the Technical Development Requirements oblige us to inform the client
@@ -261,7 +324,7 @@ and ORCE for orchestration. Versions are pinned at deployment and recorded with 
 </tr>
 <tr>
 <td><code>golang.org/x/crypto</code></td>
-<td>v0.57.0</td>
+<td>v0.58.0</td>
 <td>BSD-3-Clause</td>
 <td>bcrypt hashing of client secrets</td>
 </tr>
@@ -288,6 +351,24 @@ and ORCE for orchestration. Versions are pinned at deployment and recorded with 
 <td>v6.0.3</td>
 <td>Apache-2.0</td>
 <td>validates SBOMs and mock attestations against their JSON Schemas at admission</td>
+</tr>
+<tr>
+<td><code>github.com/jackc/pgx/v5</code></td>
+<td>v5.11.0</td>
+<td>MIT</td>
+<td>PostgreSQL driver of the token store: the schema migrations today (<code>services/token-store</code>), the service's queries as they land</td>
+</tr>
+<tr>
+<td><code>github.com/envoyproxy/go-control-plane/envoy</code></td>
+<td>v1.37.0</td>
+<td>Apache-2.0</td>
+<td>the Envoy <code>ext_authz</code> and <code>ext_proc</code> API types the guard policy hook is served through (<code>cmd/policy-hook-probe</code>); only its <code>envoyhook</code> package may import them</td>
+</tr>
+<tr>
+<td><code>google.golang.org/grpc</code></td>
+<td>v1.83.2</td>
+<td>Apache-2.0</td>
+<td>gRPC transport of the policy hook's Envoy services</td>
 </tr>
 </tbody>
 </table>
@@ -389,13 +470,13 @@ from the OpenAPI Initiative), vendored in <code>docs/contracts/tooling/oas-3.1/<
 <td>PostgreSQL</td>
 <td>16.10 (test service)</td>
 <td>PostgreSQL License</td>
-<td>token-store integration tests</td>
+<td>token-store integration tests and lifecycle proof</td>
 </tr>
 <tr>
 <td>OpenBao</td>
 <td>2.7.0 (test service)</td>
 <td>MPL-2.0</td>
-<td>token-store integration tests only; its use in the demonstrator is the declared licence exception</td>
+<td>the token-store lifecycle proof only; its use in the demonstrator is the declared licence exception</td>
 </tr>
 <tr>
 <td>OpenBao (Helm chart <code>openbao</code>)</td>
@@ -411,29 +492,76 @@ from the OpenAPI Initiative), vendored in <code>docs/contracts/tooling/oas-3.1/<
 </tr>
 </tbody>
 </table>
-<h2 id="go-dependencies-being-added">Go dependencies being added<a class="headerlink" href="#go-dependencies-being-added" title="Permanent link">&para;</a></h2>
-<p>Added to the Go module together with the code that uses them; each goes through the licence gate like any
-other dependency.</p>
+<p>The admission provider talks to OCI registries through a small first-party client built on the Go
+standard library rather than a general-purpose registry library, to keep its dependency set minimal.</p>
+<h2 id="identity-and-service-mesh">Identity and service mesh<a class="headerlink" href="#identity-and-service-mesh" title="Permanent link">&para;</a></h2>
+<p>The identity path and the mesh (<a href="../workload-identity/">Workload identity</a>) are installed from the
+upstream charts as they ship, one Helm release per chart, by <code>scripts/install-zone/install.sh</code>,
+which pins each chart by version and by the sha256 of the chart archive (the Istio charts: of the
+release archive). The container images the charts run are pinned separately, by tag and digest
+(the multi-arch index digest of the tag, read from its registry), in the values files under
+<code>deployment/helm/values/</code>: the SPIRE server, agent, controller-manager and SPIFFE CSI driver, the
+CSI node-driver registrar, the server's <code>busybox</code> init container and <code>kubectl</code> hook image, and
+Istio's <code>pilot</code>, <code>proxyv2</code> (the injected proxy and the injected <code>istio-validation</code> init container)
+and <code>install-cni</code>. The images the charts already pin by digest are left
+as they ship. One image stays a tag: <code>busybox:1.28</code> in Istio's <code>grpc-simple</code> injection template,
+which only a pod that chooses its injection templates would run, and the <code>zone-policy</code> admission
+policy refuses such a pod in every plane namespace. The values the repository sets on the charts
+are listed with their reasons in <code>deployment/helm/values/README.md</code>.</p>
 <table>
 <thead>
 <tr>
-<th>Dependency</th>
+<th>Component</th>
 <th>Version</th>
+<th>Installed through</th>
 <th>Licence</th>
-<th>Purpose</th>
+<th>Why</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>github.com/jackc/pgx/v5</code></td>
-<td>v5.11.0</td>
-<td>MIT</td>
-<td>PostgreSQL driver of the token store</td>
+<td>SPIRE (server, agent, controller-manager, SPIFFE CSI driver)</td>
+<td>v1.15.3</td>
+<td>chart <code>spire</code> 0.30.2 and chart <code>spire-crds</code> 0.6.1, from the SPIFFE hardened charts <code>https://spiffe.github.io/helm-charts-hardened/</code></td>
+<td>Apache-2.0</td>
+<td>the only issuer of workload and mesh identities (ZT-24): attests every pod and serves its SVID over the CSI-mounted Workload API socket and to the mesh proxy over SDS</td>
+</tr>
+<tr>
+<td>Istio, sidecar mode</td>
+<td>1.31.1</td>
+<td>charts <code>base</code>, <code>istiod</code> and <code>cni</code> 1.31.1, from the Istio release archive <code>istio-1.31.1-linux-amd64.tar.gz</code> (<code>manifests/charts</code>), pinned by its published sha256</td>
+<td>Apache-2.0</td>
+<td>the service mesh of <a href="../adr/0009-service-mesh-mode-istio-sidecar-with-cilium/">ADR-0009</a>: native sidecars that take their certificates from SPIRE, mesh-wide STRICT mTLS, the CNI plugin chained behind Cilium</td>
+</tr>
+<tr>
+<td>Cilium</td>
+<td>1.20.2 on kind; 1.18.8 on the participant clusters</td>
+<td>kind: chart <code>cilium/cilium</code> 1.20.2, by <code>scripts/dev/kind-cilium-up.sh</code>, the version a kind run of <code>scripts/verify-mesh-identity/verify.sh</code> shows; the participant clusters of zone A and zone B: installed and upgraded by the provider (Gardener), never by the zone, found at 1.18.8, the version a participant-cluster run of the same script shows in its preconditions and <code>environment.json</code> (see <code>scripts/verify-mesh-identity/README.md</code>) (the chaining proven on every node; cross-node pod traffic masqueraded by the provider's configuration, so the mesh is proven node-locally there and fails across nodes until the provider changes it; a kind pass on 1.20.2 supports but does not prove a fix for the provider's 1.18.8 pod network)</td>
+<td>Apache-2.0</td>
+<td>the CNI and the enforcer of the network policies, with <code>cni.exclusive=false</code> (<code>cni-exclusive=false</code> in <code>cilium-config</code>) so that the Istio plugin can chain</td>
+</tr>
+<tr>
+<td>istioctl</td>
+<td>1.31.1</td>
+<td>the operator's machine</td>
+<td>Apache-2.0</td>
+<td>reads a proxy's secrets and sync status in the proof; never installs</td>
 </tr>
 </tbody>
 </table>
-<p>The admission provider talks to OCI registries through a small first-party client built on the Go
-standard library rather than a general-purpose registry library, to keep its dependency set minimal.</p>
+<p>The Istio 1.31 charts are taken from the release archive because Istio's Helm repository and OCI
+registry do not carry them (on 2026-10-06 the repository's index stopped at 1.31.0-rc.0); the
+archive is the release Istio publishes, and its charts are the same charts.</p>
+<p><strong>Upgrades.</strong> An upgrade changes the pinned version and digest in the installer and re-reads the
+digest of every image tag in the values files (<code>docker buildx imagetools inspect &lt;image&gt;:&lt;tag&gt;</code>
+prints the index digest), then reruns <code>scripts/verify-mesh-identity/verify.sh</code>, whose record goes
+to the run directory outside the repository. The local proof runs on kind node v1.35.8 with Cilium
+1.20.2; the participant clusters run Kubernetes v1.34.7 with the provider's
+Cilium 1.18.8, and the same proof is re-run there with the keep opt-in. At every Istio minor upgrade the
+<a href="../adr/0009-service-mesh-mode-istio-sidecar-with-cilium/">ADR-0009</a> reopen check
+(<code>scripts/mesh-mode/check-upstream-state.sh</code>) runs alongside the proof. The SPIRE charts are
+upgraded as a pair (<code>spire-crds</code> first), because the controller-manager in <code>spire</code> is built
+against the CRDs of its <code>spire-crds</code>.</p>
               
             </div>
           </div><footer>

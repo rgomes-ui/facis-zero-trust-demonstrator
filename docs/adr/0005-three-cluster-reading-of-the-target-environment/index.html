@@ -63,6 +63,10 @@
                 <li class="toctree-l1"><a class="reference internal" href="../../umbrella-chart/">Umbrella chart</a>
                 </li>
               </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../workload-identity/">Workload identity</a>
+                </li>
+              </ul>
               <p class="caption"><span class="caption-text">Environments</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../environments/">Overview</a>
@@ -73,9 +77,19 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../environments/application-workloads/">Application workloads</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../environments/capabilities/">Capability sheets</a>
+                  </li>
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../../packaging/">Packaging and containers</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../application-services/">Application services</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../application-services-verification/">Application service verification</a>
                 </li>
               </ul>
               <ul>
@@ -91,11 +105,27 @@
                 </li>
               </ul>
               <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../demonstrator-handoff/">Demonstrator UI and identity</a>
+                </li>
+              </ul>
+              <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../../identity-model/">Identity model</a>
                 </li>
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../../oauth2-provider/">Connector OAuth2 provider</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../connector/">Connector service</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../token-store/">Token store</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../policy-hook/">Guard policy hook</a>
                 </li>
               </ul>
               <ul>
@@ -110,11 +140,17 @@
                 <li class="toctree-l1"><a class="reference internal" href="../../tspa-publish-api/">TRAIN trust-list publishing</a>
                 </li>
               </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../train-dns/">TRAIN DNS zone</a>
+                </li>
+              </ul>
               <p class="caption"><span class="caption-text">BDD acceptance</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../bdd/">Harness and pack</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../bdd-catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../evidence-m3/">M3 evidence</a>
                   </li>
               </ul>
               <ul>
@@ -141,13 +177,22 @@
                 <li class="toctree-l1"><a class="reference internal" href="../../specifications/">Specification changes</a>
                 </li>
               </ul>
+              <p class="caption"><span class="caption-text">Evidence</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../evidences/mesh-mode-upstream-state/">Mesh mode, upstream state: about</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../evidences/mesh-mode-upstream-state/upstream-state/">Mesh mode, upstream state: record</a>
+                  </li>
+              </ul>
               <p class="caption"><span class="caption-text">Architecture decisions</span></p>
               <ul class="current">
                   <li class="toctree-l1"><a class="reference internal" href="../">Overview</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../decision-ledger/">Decision ledger</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../tdr-decisions/">TDR decisions ADR 001–006</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../0001-service-mesh-mode-istio-ambient-with-cilium/">0001 Service mesh mode</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../0001-service-mesh-mode-istio-ambient-with-cilium/">0001 Service mesh mode (superseded by 0009)</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../0002-gatekeeper-external-data-provider-for-cosign-verification/">0002 Gatekeeper external data provider</a>
                   </li>
@@ -167,7 +212,13 @@
     </li>
     </ul>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../0009-service-mesh-mode-istio-sidecar-with-cilium/">0009 Service mesh mode (sidecar, supersedes 0001)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../0008-envoy-ext-authz-as-the-guard-policy-hook/">0008 Guard policy hook</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../0011-mock-tee-evidence-format-and-provisioning/">0011 Mock TEE evidence</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../0016-oauth2-library-behind-the-connector-provider-contract/">0016 OAuth2 library</a>
                   </li>
               </ul>
       </div>
@@ -236,7 +287,7 @@ and the XFSC stack deployed.</p>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href="../0004-openbao-as-x509-key-value-store/" class="btn btn-neutral float-left" title="0004 OpenBao as X.509 key-value store"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../0011-mock-tee-evidence-format-and-provisioning/" class="btn btn-neutral float-right" title="0011 Mock TEE evidence">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../0009-service-mesh-mode-istio-sidecar-with-cilium/" class="btn btn-neutral float-right" title="0009 Service mesh mode (sidecar, supersedes 0001)">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -267,7 +318,7 @@ and the XFSC stack deployed.</p>
       <span><a href="../0004-openbao-as-x509-key-value-store/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../0011-mock-tee-evidence-format-and-provisioning/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../0009-service-mesh-mode-istio-sidecar-with-cilium/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
