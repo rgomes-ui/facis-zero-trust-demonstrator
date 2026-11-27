@@ -17,6 +17,7 @@ import (
 	"github.com/eclipse-xfsc/facis-zero-trust-demonstrator/internal/if03"
 	"github.com/eclipse-xfsc/facis-zero-trust-demonstrator/internal/if03/if03fixture"
 	"github.com/eclipse-xfsc/facis-zero-trust-demonstrator/internal/meshcaller"
+	"github.com/eclipse-xfsc/facis-zero-trust-demonstrator/internal/transit"
 )
 
 // Config is the acquisition configuration file (JSON). It holds file paths, never secrets.
@@ -97,6 +98,14 @@ func LoadConfig(path string) (Loaded, error) {
 	}
 	if c.SigningKey == "" {
 		return Loaded{}, errors.New("acquisition config: signing_key is required")
+	}
+	// A name transit would refuse is refused here, so a bad name stops the service at start with a
+	// usage error rather than being retried as an outage.
+	if err := transit.ValidName(c.SigningKey); err != nil {
+		return Loaded{}, errors.New("acquisition config: signing_key must be a transit key name: 1-128 characters from A-Z, a-z, 0-9, '.', '_' and '-'")
+	}
+	if c.ConnectorSigningKey != "" && transit.ValidName(c.ConnectorSigningKey) != nil {
+		return Loaded{}, errors.New("acquisition config: connector_signing_key must be a transit key name: 1-128 characters from A-Z, a-z, 0-9, '.', '_' and '-'")
 	}
 	if c.KVPrefix == "" {
 		c.KVPrefix = KVPrefix
